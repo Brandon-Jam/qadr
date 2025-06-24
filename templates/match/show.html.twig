@@ -1,0 +1,28 @@
+<h1>Match {{ match.id }} - {{ match.player1.userIdentifier }} vs {{ match.player2.userIdentifier }}</h1>
+
+<p>{{ match.player1.userIdentifier }} HP : {{ match.score1 }}</p>
+<p>{{ match.player2.userIdentifier }} HP : {{ match.score2 }}</p>
+
+<h2>Vos cartes</h2>
+<ul>
+{% for card in availableCards %}
+    <li>
+        {{ card.card.name }}
+      <form method="POST" action="{{ path('app_tournament_match_use_card', {
+    tournamentId: tournament.id,
+    id: match.id,
+    cardId: card.card.id
+}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('use_card_' ~ card.id) }}">
+    <button type="submit" class="btn btn-primary btn-sm">Activer la carte</button>
+</form>
+        {% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }}">{{ message }}</div>
+    {% endfor %}
+{% endfor %}
+    </li>
+{% else %}
+    <li>Aucune carte disponible.</li>
+{% endfor %}
+</ul>

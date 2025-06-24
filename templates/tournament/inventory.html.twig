@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Inventaire – {{ tournament.name }}</h1>
+<p>Crédits restants : {{ participant.credits }}</p>
+
+ {% if cards is empty %}
+        <p>Aucune carte achetée.</p>
+    {% else %}
+        <ul>
+            {% for item in cards %}
+                <li>
+                    {{ item.card.name }} — {{ item.card.effect }} — Quantité : {{ item.quantity }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+<a href="{{ path('app_tournament_show', {id: tournament.id}) }}" class="btn btn-link mt-4">← Retour au tournoi</a>
+{% endblock %}

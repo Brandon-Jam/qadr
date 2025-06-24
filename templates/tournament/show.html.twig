@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ tournament.name }}</h1>
+
+    <ul>
+        <li><strong>Lieu :</strong> {{ tournament.location }}</li>
+        <li><strong>Date :</strong> {{ tournament.date|date('d/m/Y H:i') }}</li>
+        <li><strong>Places dispos :</strong> {{ tournament.availableSlots }}</li>
+        <li><strong>Prix d'inscription :</strong> {{ tournament.price }} €</li>
+        <li><strong>Gain 1er :</strong> {{ tournament.winningPrice }} €</li>
+        <li><strong>Status :</strong> {{ tournament.status }}</li>
+    </ul>
+
+    {% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+   <h2>Participants ({{ tournament.tournamentParticipants|length }}/{{ tournament.availableSlots }})</h2>
+<ul>
+  {% for p in tournament.tournamentParticipants %}
+    <li>{{ p.user.email }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

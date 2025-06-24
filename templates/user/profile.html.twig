@@ -1,0 +1,30 @@
+<h1>Mon profil</h1>
+
+<h2>Mes participations</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tournoi</th>
+            <th>Date d’inscription</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for participation in participations %}
+            <tr>
+                <td>{{ participation.tournament.name }}</td>
+                <td>{{ participation.joinedAt ? participation.joinedAt|date('d/m/Y H:i') : 'N/A' }}</td>
+                <td>
+                    {% if participation.confirmed %}
+                        ✅ Confirmée
+                    {% else %}
+                        ⏳ En attente
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="3">Aucune participation.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
