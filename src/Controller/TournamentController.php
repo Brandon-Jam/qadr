@@ -14,17 +14,41 @@ use App\Repository\TournamentParticipantRepository;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Bundle\SecurityBundle\Security;
 
 final class TournamentController extends AbstractController
 {
     #[Route('/tournament', name: 'app_tournament')]
-    public function index(TournamentRepository $tournamentRepository): Response
-    {
-        $tournaments = $tournamentRepository->findAll();
+  
+
+public function index(
+    TournamentRepository $tournamentRepo,
+    Security $security
+): Response {
+    $user = $security->getUser();
+    $tournaments = $tournamentRepo->findAll();
+
+    $registeredTournaments = [];
+
+   if ($user !== null) {
+    foreach ($tournaments as $tournament) {
+        foreach ($tournament->getTournamentParticipants() as $participant) {
+            if ($participant->getUser() && $participant->getUser()->getId() === $user->getId()) {
+                $registeredTournaments[] = $tournament->getId();
+            }
+        }
+    }
+}
+
     return $this->render('tournament/index.html.twig', [
         'tournaments' => $tournaments,
+        'registeredTournaments' => $registeredTournaments,
     ]);
-    }
+}
+
+
+
+
 
 #[Route('/tournament/{id}', name: 'app_tournament_show')]
 public function show(Tournament $tournament): Response
