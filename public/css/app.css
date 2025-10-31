@@ -1,0 +1,36 @@
+body {
+    background-color: #0d1117;
+    color: #e0e0e0;
+}
+
+.card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(255, 0, 60, 0.3);
+}
+
+.btn-danger {
+    background-color: #ff4757;
+    border: none;
+}
+
+.btn-danger:hover,
+.btn-outline-danger:hover {
+    background-color: #e84118;
+}
+
+.btn-outline-danger {
+    border-color: #ff4757;
+    color: #ff4757;
+}
+
+.card img {
+    height: 180px;              /* hauteur fixe */
+    object-fit: cover;          /* garde le bon cadrage */
+    width: 100%;                /* prend toute la largeur */
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}

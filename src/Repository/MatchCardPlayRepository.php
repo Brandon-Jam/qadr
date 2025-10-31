@@ -16,6 +16,32 @@ class MatchCardPlayRepository extends ServiceEntityRepository
         parent::__construct($registry, MatchCardPlay::class);
     }
 
+    public function getTopCardsGlobal(int $limit = 5): array
+{
+    return $this->createQueryBuilder('mcp')
+        ->select('c.name AS card_name, COUNT(mcp.id) AS times_played')
+        ->join('mcp.card', 'c')
+        ->groupBy('c.id')
+        ->orderBy('times_played', 'DESC')
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+}
+
+public function getTopCardsByTournament(): array
+{
+    return $this->createQueryBuilder('mcp')
+        ->select('t.name AS tournament_name, c.name AS card_name, COUNT(mcp.id) AS times_played')
+        ->join('mcp.card', 'c')
+        ->join('mcp.match', 'm')
+        ->join('m.tournament', 't')
+        ->groupBy('t.id, c.id')
+        ->orderBy('t.name', 'ASC')
+        ->addOrderBy('times_played', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
+
     //    /**
     //     * @return MatchCardPlay[] Returns an array of MatchCardPlay objects
     //     */

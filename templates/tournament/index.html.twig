@@ -8,20 +8,48 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
+<div class="container mt-4">
+   
+
 <div class="example-wrapper">
      <h1>Liste des tournois</h1>
 
-    <ul>
-        {% for tournament in tournaments %}
-            <li>
-                {{ tournament.name }} – {{ tournament.location }} – {{ tournament.date|date('d/m/Y') }}
-            </li>
-        {% else %}
-            <li>Aucun tournoi pour l’instant.</li>
-        {% endfor %}
-    </ul>
+  
 
-
+ {% if tournaments is empty %}
+        <p class="text-light">Aucun tournoi pour l’instant.</p>
+    {% else %}
+        <div class="row">
+            {% for tournament in tournaments %}
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-dark text-light border-secondary shadow-sm h-100">
+                   
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="card-title text-uppercase fw-bold text-danger">
+                                    {{ tournament.name }}
+                                </h5>
+                                 <img 
+                            src="{{ tournament.image ? asset('img/tournaments/' ~ tournament.image) : asset('images/tournaments/default.jpg') }}" 
+                            alt="Lieu du tournoi" 
+                            class="img-fluid rounded-top">
+                                <p class="card-text text-muted mb-1">
+                                    📍 {{ tournament.location }}
+                                </p>
+                                <p class="card-text text-muted">
+                                    📅 {{ tournament.date|date('d/m/Y') }}
+                                </p>
+                            </div>
+                            <a href="{{ path('app_tournament_show', { id: tournament.id }) }}" class="btn btn-outline-danger mt-3 fw-bold">
+                                Voir le tournoi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
 </div>
 
 

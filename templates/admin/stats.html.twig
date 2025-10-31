@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<h1 class="mb-4">📊 Statistiques Générales</h1>
+
+<ul class="list-group">
+  <li class="list-group-item">👥 Nombre total de joueurs : <strong>{{ totalUsers }}</strong></li>
+  <li class="list-group-item">🏆 Nombre total de tournois : <strong>{{ totalTournaments }}</strong></li>
+  <li class="list-group-item">🎮 Nombre total de matchs : <strong>{{ totalMatches }}</strong></li>
+  <li class="list-group-item">🃏 Nombre total de cartes jouées : <strong>{{ totalCardsPlayed }}</strong></li>
+</ul>
+
+<h2 class="mt-5">🥇 Cartes les plus jouées (global)</h2>
+<ul class="list-group">
+  {% for card in topCards %}
+    <li class="list-group-item">
+      {{ card.card_name }} — {{ card.times_played }} fois
+    </li>
+  {% else %}
+    <li class="list-group-item">Aucune donnée.</li>
+  {% endfor %}
+</ul>
+
+<h2 class="mt-5">🏆 Cartes les plus jouées par tournoi</h2>
+{% set lastTournament = '' %}
+<ul class="list-group">
+  {% for row in topCardsByTournament %}
+    {% if row.tournament_name != lastTournament %}
+      <li class="list-group-item active">{{ row.tournament_name }}</li>
+      {% set lastTournament = row.tournament_name %}
+    {% endif %}
+    <li class="list-group-item ps-4">
+      {{ row.card_name }} — {{ row.times_played }} fois
+    </li>
+  {% else %}
+    <li class="list-group-item">Aucune donnée.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
