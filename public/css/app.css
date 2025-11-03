@@ -34,3 +34,476 @@ body {
     border-top-left-radius: 0.5rem;
     border-top-right-radius: 0.5rem;
 }
+
+
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+  margin: 0;
+  
+  color: #fff;
+}
+
+/* === NAVBAR GAMING NÉON === */
+.gaming-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #0d0d0d;
+  border: 2px solid #ff0044;
+  box-shadow: 0 0 20px #ff0044, inset 0 0 10px #ff0044;
+  font-family: 'Press Start 2P', cursive;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.gaming-navbar .logo a {
+  color: #ff0044;
+  text-decoration: none;
+  font-size: 1.1rem;
+  text-shadow: 0 0 5px #ff0044, 0 0 15px #ff0044;
+}
+
+.gaming-navbar .nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.8rem;
+  margin: 0;
+  padding: 0;
+}
+
+.gaming-navbar .nav-links li a,
+.gaming-navbar .nav-links li span {
+  color: #f1f1f1;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 3px #ff0044;
+}
+
+.gaming-navbar .nav-links li a:hover {
+  color: #ff0044;
+  text-shadow: 0 0 5px #ff0044, 0 0 20px #ff0044;
+  transform: scale(1.05);
+}
+
+.gaming-navbar .nav-links li a.active {
+  color: #ff0044;
+  border-bottom: 2px solid #ff0044;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gaming-navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gaming-navbar .nav-links {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+/* === HERO === */
+.intro-hero {
+  height: 100vh;
+  background: url('/images/bg-gaming.jpg') center/cover no-repeat;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  overflow: hidden;
+}
+
+.intro-hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  box-shadow: inset 0 0 60px #ff0044;
+}
+
+.intro-hero .hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+}
+
+.intro-hero h1 {
+  color: #ff0044;
+  text-shadow: 0 0 20px #ff0044, 0 0 40px #ff0044;
+  font-size: 1.8rem;
+}
+
+.intro-hero p {
+  margin: 1.5rem 0;
+  color: #ddd;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.cta-btn {
+  display: inline-block;
+  background: #ff0044;
+  color: white;
+  text-decoration: none;
+  padding: 0.9rem 1.6rem;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #ff0044;
+  transition: all 0.3s;
+}
+
+.cta-btn:hover {
+  background: #fff;
+  color: #ff0044;
+  box-shadow: 0 0 30px #ff0044;
+}
+
+/* === ABOUT === */
+.about {
+  padding: 4rem 2rem;
+  background: #0d0d0d;
+  text-align: center;
+  color: #ccc;
+}
+
+.about h2 {
+  color: #ff0044;
+  font-family: 'Press Start 2P', cursive;
+  margin-bottom: 1rem;
+}
+
+/* === FEATURES MINI === */
+.features-mini {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  background: #111;
+  padding: 3rem 2rem;
+}
+
+.features-mini .feat {
+  border: 2px solid #ff0044;
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 250px;
+  text-align: center;
+  box-shadow: 0 0 10px #ff0044;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.features-mini .feat:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 20px #ff0044, 0 0 40px #ff0044;
+}
+
+.features-mini h3 {
+  color: #ff0044;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+/* === LOGIN PAGE === */
+.login-hero {
+  height: 100vh;
+  background: linear-gradient(270deg, #ff0044, #66001f, #0a0a0a);
+  background-size: 600% 600%;
+  animation: neonFlow 10s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+}
+
+@keyframes neonFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  box-shadow: inset 0 0 60px #ff0044;
+  z-index: 0;
+}
+
+.login-box {
+  position: relative;
+  z-index: 2;
+  background: rgba(20, 20, 20, 0.85);
+  border: 2px solid #ff0044;
+  box-shadow: 0 0 25px #ff0044;
+  border-radius: 15px;
+  padding: 3rem 2rem;
+  width: 90%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.login-box h1 {
+  color: #ff0044;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 15px #ff0044;
+  font-size: 1.2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: #ff0044;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ff0044;
+  border-radius: 8px;
+  background: #111;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  box-shadow: 0 0 15px #ff0044;
+}
+
+.btn-login {
+  width: 100%;
+  background: #ff0044;
+  border: none;
+  color: white;
+  padding: 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  box-shadow: 0 0 15px #ff0044;
+}
+
+.btn-login:hover {
+  background: #fff;
+  color: #ff0044;
+  box-shadow: 0 0 30px #ff0044;
+}
+
+.register-text {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: #ccc;
+}
+
+.register-text a {
+  color: #ff0044;
+  text-decoration: none;
+}
+
+.register-text a:hover {
+  text-shadow: 0 0 10px #ff0044;
+}
+
+.error-message {
+  background: rgba(255, 0, 68, 0.2);
+  border: 1px solid #ff0044;
+  color: #ff6677;
+  padding: 0.7rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+}
+
+/* === REGISTER PAGE === */
+.login-box h1 {
+  color: #ff0044;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 15px #ff0044, 0 0 30px #ff0044;
+  font-size: 1.2rem;
+  animation: glowPulse 2s infinite;
+}
+
+@keyframes glowPulse {
+  0% { text-shadow: 0 0 10px #ff0044, 0 0 30px #ff0044; }
+  50% { text-shadow: 0 0 30px #ff0044, 0 0 60px #ff0044; }
+  100% { text-shadow: 0 0 10px #ff0044, 0 0 30px #ff0044; }
+}
+
+.form-group.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.form-group.checkbox label {
+  color: #ccc;
+  font-size: 0.7rem;
+}
+
+/* === HERO TOURNOIS === */
+.tournament-hero {
+  height: 35vh;
+  background: linear-gradient(270deg, #ff0044, #66001f, #0a0a0a);
+  background-size: 600% 600%;
+  animation: neonFlow 10s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.tournament-hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  box-shadow: inset 0 0 50px #ff0044;
+}
+
+.tournament-hero .hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.tournament-hero h1 {
+  color: #ff0044;
+  text-shadow: 0 0 20px #ff0044, 0 0 40px #ff0044;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* === LISTE TOURNOIS === */
+.tournament-list {
+  background: #0d0d0d;
+  padding: 3rem 2rem;
+  color: #fff;
+  min-height: 50vh;
+}
+
+.tournament-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.tournament-card {
+  background: rgba(20, 20, 20, 0.9);
+  border: 2px solid #ff0044;
+  border-radius: 12px;
+  box-shadow: 0 0 15px #ff0044;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tournament-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 30px #ff0044, 0 0 60px #ff0044;
+}
+
+.tournament-img img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 2px solid #ff0044;
+}
+
+.tournament-info {
+  padding: 1rem;
+  text-align: center;
+}
+
+.tournament-info h2 {
+  color: #ff0044;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  margin-bottom: 0.6rem;
+}
+
+.tournament-info p {
+  margin: 0.3rem 0;
+  color: #ccc;
+  font-size: 0.75rem;
+}
+
+.tournament-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 0, 68, 0.4);
+}
+
+.btn-join,
+.btn-joined,
+.btn-login-neon {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-family: 'Press Start 2P', cursive;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-join {
+  background: #ff0044;
+  color: white;
+  border: none;
+  box-shadow: 0 0 15px #ff0044;
+}
+
+.btn-join:hover {
+  background: white;
+  color: #ff0044;
+  box-shadow: 0 0 25px #ff0044;
+}
+
+.btn-joined {
+  background: #111;
+  color: #ff0044;
+  border: 1px solid #ff0044;
+  cursor: default;
+}
+
+.btn-login-neon {
+  background: transparent;
+  border: 1px solid #ff0044;
+  color: #ff0044;
+  box-shadow: 0 0 10px #ff0044;
+}
+
+.btn-login-neon:hover {
+  background: #ff0044;
+  color: white;
+}
+
+.no-tournament {
+  text-align: center;
+  color: #ff0044;
+  font-family: 'Press Start 2P', cursive;
+  text-shadow: 0 0 10px #ff0044;
+  margin-top: 3rem;
+}

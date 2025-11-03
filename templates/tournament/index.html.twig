@@ -1,71 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello TournamentController!{% endblock %}
+{% block title %}Tournois{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<section class="tournament-hero">
+  <div class="overlay"></div>
+  <div class="hero-content">
+    <h1>Liste des Tournois</h1>
+    <p>Affronte d’autres challengers et prouve ta valeur dans l’arène 🔥</p>
+  </div>
+</section>
 
-<div class="container mt-4">
-   
+<section class="tournament-list">
+  {% if tournaments is empty %}
+    <p class="no-tournament">Aucun tournoi disponible pour le moment ⚔️</p>
+  {% else %}
+    <div class="tournament-grid">
+      {% for tournament in tournaments %}
+        <div class="tournament-card">
+          <a href="{{ path('app_tournament_show', { id: tournament.id }) }}" class="card-link">
+            <div class="tournament-img">
+              <img 
+                src="{{ tournament.image ? asset('img/tournaments/' ~ tournament.image) : asset('images/tournaments/default.jpg') }}" 
+                alt="Image du tournoi {{ tournament.name }}">
+            </div>
 
-<div class="example-wrapper">
-     <h1>Liste des tournois</h1>
+            <div class="tournament-info">
+              <h2>{{ tournament.name }}</h2>
+              <p class="location">📍 {{ tournament.location }}</p>
+              <p class="date">📅 {{ tournament.date|date('d/m/Y') }}</p>
+            </div>
+          </a>
 
-  
-
- {% if tournaments is empty %}
-        <p class="text-light">Aucun tournoi pour l’instant.</p>
-    {% else %}
-        <div class="row">
-            {% for tournament in tournaments %}
-                <div class="col-md-3 mb-3">
-                    <div class="card bg-dark text-light border-secondary shadow-sm h-100">
-                     <a href="{{ path('app_tournament_show', { id: tournament.id }) }}" class="btn btn-outline-danger mt-3 fw-bold">
-                              
-                   
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <div>
-                                <h5 class="card-title text-uppercase fw-bold text-danger">
-                                    {{ tournament.name }}
-                                </h5>
-                                 <img 
-                            src="{{ tournament.image ? asset('img/tournaments/' ~ tournament.image) : asset('images/tournaments/default.jpg') }}" 
-                            alt="Lieu du tournoi" 
-                            class="img-fluid rounded-top">
-                                <p class="card-text text-muted mb-1">
-                                    📍 {{ tournament.location }}
-                                </p>
-                                <p class="card-text text-muted">
-                                    📅 {{ tournament.date|date('d/m/Y') }}
-                                </p>
-                            </div>
-                           
-                         
-                        </div>
-                    </div>
-                       </a>
-                        {% if app.user %}
-                    {% if tournament.id in registeredTournaments %}
-                        <button class="btn btn-secondary btn-sm w-100" disabled>Déjà inscrit ✅</button>
-                    {% else %}
-                        <a href="{{ path('app_tournament_register', { id: tournament.id }) }}" class="btn btn-danger btn-sm w-100">
-                            S’inscrire 🔥
-                        </a>
-                    {% endif %}
-                {% else %}
-                    <a href="{{ path('app_login') }}" class="btn btn-outline-light btn-sm w-100">
-                        Se connecter
-                    </a>
-                {% endif %}
-                </div>
-            {% endfor %}
+          <div class="tournament-actions">
+            {% if app.user %}
+              {% if tournament.id in registeredTournaments %}
+                <button class="btn-joined" disabled>Déjà inscrit ✅</button>
+                {% elseif tournament.tournamentParticipants|length >= tournament.availableSlots %}
+      <button class="btn-disabled" disabled>Complet ❌</button>
+              {% else %}
+                <a href="{{ path('app_tournament_register', { id: tournament.id }) }}" class="btn-join">S’inscrire 🔥</a>
+              {% endif %}
+            {% else %}
+              <a href="{{ path('app_login') }}" class="btn-login-neon">Se connecter</a>
+            {% endif %}
+          </div>
         </div>
-    {% endif %}
-</div>
-</div>
-
-
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
 {% endblock %}

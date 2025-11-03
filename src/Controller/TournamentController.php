@@ -80,7 +80,6 @@ public function registerToTournament(
 
 if (count($tournament->getTournamentParticipants()) >= $tournament->getAvailableSlots()) {
     $this->addFlash('error', 'Ce tournoi est complet.');
-     dd('off2');
     return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
    
 }
