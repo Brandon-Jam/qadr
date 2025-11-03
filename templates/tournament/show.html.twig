@@ -1,28 +1,110 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ tournament.name }}{% endblock %}
+
 {% block body %}
-    <h1>{{ tournament.name }}</h1>
+<section class="tournament-header">
+  <div class="tournament-header-inner">
+    <div class="tournament-image">
+      <img src="{{ tournament.image ? asset('img/tournaments/' ~ tournament.image) : asset('images/tournaments/default.jpg') }}" 
+           alt="{{ tournament.name }}">
+    </div>
 
-    <ul>
-        <li><strong>Lieu :</strong> {{ tournament.location }}</li>
-        <li><strong>Date :</strong> {{ tournament.date|date('d/m/Y H:i') }}</li>
-        <li><strong>Places dispos :</strong> {{ tournament.availableSlots }}</li>
-        <li><strong>Prix d'inscription :</strong> {{ tournament.price }} €</li>
-        <li><strong>Gain 1er :</strong> {{ tournament.winningPrice }} €</li>
-        <li><strong>Status :</strong> {{ tournament.status }}</li>
-    </ul>
+    <div class="tournament-info">
+      <h1>{{ tournament.name }}</h1>
+      <p class="meta">📅 {{ tournament.date|date('d/m/Y') }} — 📍 {{ tournament.location }}</p>
+      <p class="slots">🎮 {{ tournament.tournamentParticipants|length }}/{{ tournament.availableSlots }} joueurs inscrits</p>
+     
 
-    {% for label, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="alert alert-{{ label }}">
-            {{ message }}
+      <div class="banner-actions">
+        {% if app.user %}
+          {% set isRegistered = false %}
+          {% for p in tournament.tournamentParticipants %}
+            {% if p.user.id == app.user.id %}
+              {% set isRegistered = true %}
+            {% endif %}
+          {% endfor %}
+
+          {% if isRegistered %}
+            <button class="btn-joined" disabled>Déjà inscrit ✅</button>
+          {% elseif tournament.tournamentParticipants|length >= tournament.availableSlots %}
+            <button class="btn-disabled" disabled>Complet ❌</button>
+          {% else %}
+            <a href="{{ path('app_tournament_register', { id: tournament.id }) }}" class="btn-join">S’inscrire 🔥</a>
+          {% endif %}
+        {% else %}
+          <a href="{{ path('app_login') }}" class="btn-login-neon">Se connecter</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tournament-participants">
+  <h2>👥 Participants</h2>
+
+  {% if tournament.tournamentParticipants is empty %}
+    <p class="empty-text">Aucun joueur inscrit pour le moment.</p>
+  {% else %}
+    <div class="participants-grid">
+      {% for p in tournament.tournamentParticipants %}
+        <div class="player-card">
+          <div class="player-avatar">
+            <img src="{{ asset('img/avatars/' ~ p.user.avatar) }}" alt="Avatar joueur">
+          </div>
+          <div class="player-info">
+            <h3>{{ p.user.pseudo|default(p.user.email) }}</h3>
+            {% if app.user and app.user.id == p.user.id %}
+              <span class="tag">Moi</span>
+            {% endif %}
+          </div>
         </div>
-    {% endfor %}
-{% endfor %}
-   <h2>Participants ({{ tournament.tournamentParticipants|length }}/{{ tournament.availableSlots }})</h2>
-<ul>
-  {% for p in tournament.tournamentParticipants %}
-    <li>{{ p.user.email }}</li>
-  {% endfor %}
-</ul>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+</div>
+
+<div class="tournament-actions">
+  {% if app.user %}
+    {% if isRegistered %}
+      
+      <a href="{{ path('app_tournament_shop', { id: tournament.id }) }}" class="btn-shop">🛒 Boutique du tournoi</a>
+    {% elseif tournament.tournamentParticipants|length >= tournament.availableSlots %}
+      <button class="btn-disabled">Complet ❌</button>
+    {% else %}
+      <a href="{{ path('app_tournament_register', { id: tournament.id }) }}" class="btn-join">S’inscrire 🔥</a>
+    {% endif %}
+  {% else %}
+    <a href="{{ path('app_login') }}" class="btn-login-neon">Se connecter</a>
+  {% endif %}
+</div>
+
+<section class="tournament-cards">
+  <h2>🎴 Cartes disponibles</h2>
+
+  {% if tournament.tournamentCards is empty %}
+    <p class="empty-text">Aucune carte disponible pour ce tournoi.</p>
+  {% else %}
+    <div class="cards-grid">
+      {% for tournamentCard in tournament.tournamentCards %}
+        {% set card = tournamentCard.card %}
+        <div class="card-element {{ card.element|lower }}">
+          <img 
+            src="{{ asset('img/cards/' ~ card.image) }}" 
+            alt="{{ card.name }}" 
+            class="card-img"
+          >
+          <div class="card-info">
+            <h3>{{ card.name }}</h3>
+            <p class="bonus">{{ card.effect }}</p>
+            {% if card.rank is defined %}
+              <p class="rank">Rang : {{ card.rank }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
 {% endblock %}

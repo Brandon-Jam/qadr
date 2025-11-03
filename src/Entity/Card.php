@@ -30,6 +30,10 @@ class Card
     #[ORM\Column(length: 255)]
     private ?string $image = null;
 
+    #[ORM\Column(length: 20)]
+    private ?string $element = null;
+    
+
     /**
      * @var Collection<int, TournamentCard>
      */
@@ -111,6 +115,17 @@ class Card
         $this->image = $image;
 
         return $this;
+    }
+
+    public function getElement(): ?string
+    {
+        return $this->element;
+    }
+
+    public function setElement(string $element): static
+        {
+        $this->element = $element;
+     return $this;
     }
 
     /**
