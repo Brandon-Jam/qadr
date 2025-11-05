@@ -1,20 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<h1>Inventaire – {{ tournament.name }}</h1>
-<p>Crédits restants : {{ participant.credits }}</p>
+<section class="inventory-section">
+    <h1 class="inventory-title">🎴 Inventaire – {{ tournament.name }}</h1>
+    <p class="credits">💰 Crédits restants : <strong>{{ participant.credits }}</strong></p>
 
- {% if cards is empty %}
-        <p>Aucune carte achetée.</p>
+    {% if cards is empty %}
+        <p class="empty-text">Aucune carte achetée pour ce tournoi.</p>
     {% else %}
-        <ul>
+        <div class="inventory-grid">
             {% for item in cards %}
-                <li>
-                    {{ item.card.name }} — {{ item.card.effect }} — Quantité : {{ item.quantity }}
-                </li>
+                <div class="inventory-card rarity-{{ item.card.rarity|default('normal')|lower }}">
+                    {% if item.card.image %}
+                        <img src="{{ asset('img/cards/' ~ item.card.image) }}" alt="{{ item.card.name }}">
+                    {% endif %}
+                    <h3 class="card-name">{{ item.card.name }}</h3>
+                    <p class="card-effect">{{ item.card.effect }}</p>
+                    <div class="card-quantity">x{{ item.quantity }}</div>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     {% endif %}
 
-<a href="{{ path('app_tournament_show', {id: tournament.id}) }}" class="btn btn-link mt-4">← Retour au tournoi</a>
+    <a href="{{ path('app_tournament_show', {id: tournament.id}) }}" class="btn-back">← Retour au tournoi</a>
+</section>
 {% endblock %}

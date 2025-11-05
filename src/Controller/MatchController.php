@@ -3,19 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Card;
-use App\Entity\Tournament;
 use App\Entity\MatchCardPlay;
-use App\Entity\TournamentMatch;
 use App\Entity\TournamentParticipantCard;
 use App\Repository\TournamentRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\TournamentCardRepository;
 use App\Repository\TournamentMatchRepository;
+use App\Repository\TournamentParticipantRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\TournamentParticipantRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/tournament/{tournamentId}/match', name: 'app_tournament_match_')]
 class MatchController extends AbstractController
@@ -40,29 +37,58 @@ class MatchController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(
-        int $tournamentId,
-        int $id,
-        TournamentRepository $tournamentRepo,
-        TournamentMatchRepository $matchRepo,
-        TournamentCardRepository $tcRepo
-    ): Response {
-        $tournament = $tournamentRepo->find($tournamentId);
-        $match = $matchRepo->find($id);
+public function show(
+    int $tournamentId,
+    int $id,
+    TournamentRepository $tournamentRepo,
+    TournamentMatchRepository $matchRepo,
+    TournamentParticipantRepository $participantRepo,
+    EntityManagerInterface $em
+): Response {
+    $tournament = $tournamentRepo->find($tournamentId);
+    $match = $matchRepo->find($id);
 
-        if (!$tournament || !$match || $match->getTournament()->getId() !== $tournament->getId()) {
-            throw $this->createNotFoundException('Match ou tournoi invalide.');
-        }
+    if (!$tournament || !$match || $match->getTournament()->getId() !== $tournament->getId()) {
+        throw $this->createNotFoundException('Match ou tournoi invalide.');
+    }
 
-        $user = $this->getUser();
-        $availableCards = $tcRepo->findAvailableCardsForUserInMatch($match, $user);
+    $user = $this->getUser();
 
-        return $this->render('match/show.html.twig', [
-            'tournament' => $tournament,
-            'match' => $match,
-            'availableCards' => $availableCards,
+    $participant = $participantRepo->findOneBy([
+        'user' => $user,
+        'tournament' => $tournament,
+    ]);
+
+    if (!$participant) {
+        $this->addFlash('danger', 'Vous ne participez pas à ce tournoi.');
+        return $this->redirectToRoute('app_tournament_show', [
+            'id' => $tournamentId,
         ]);
     }
+
+    // ✅ Cartes disponibles pour ce joueur
+    $availableCards = $em->getRepository(TournamentParticipantCard::class)
+    ->createQueryBuilder('c')
+    ->where('c.participant = :participant')
+    ->andWhere('c.quantity > 0')
+    ->setParameter('participant', $participant)
+    ->getQuery()
+    ->getResult();
+
+    // ✅ Cartes déjà utilisées dans ce match
+    $usedCards = $em->getRepository(\App\Entity\MatchCardPlay::class)->findBy(
+        ['match' => $match],
+        ['usedAt' => 'DESC'] // tri du plus récent au plus ancien
+    );
+
+    return $this->render('match/show.html.twig', [
+        'tournament' => $tournament,
+        'match' => $match,
+        'availableCards' => $availableCards,
+        'usedCards' => $usedCards,
+    ]);
+}
+
 
     #[Route('/{id}/use-card/{cardId}', name: 'use_card', methods: ['POST'])]
     public function useCard(
@@ -132,5 +158,5 @@ class MatchController extends AbstractController
             'tournamentId' => $tournamentId,
             'id' => $match->getId(),
         ]);
-    
-}}
+    }
+}

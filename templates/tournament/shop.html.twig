@@ -1,26 +1,29 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<h1>Boutique du tournoi : {{ tournament.name }}</h1>
-<p>Crédits disponibles : {{ participant.credits }}</p>
+<section class="tournament-shop">
+    <h1 class="shop-title">🛒 Boutique du tournoi : <span>{{ tournament.name }}</span></h1>
+    <p class="credits">💰 Crédits disponibles : <strong>{{ participant.credits }}</strong></p>
 
-<div class="row">
-    {% for tc in cards %}
-        <div class="col-md-4 mb-3">
-            <div class="card p-3">
-                <h4>{{ tc.card.name }}</h4>
-                <p>{{ tc.card.effect }}</p>
-                <p>Coût : {{ tc.card.cost }} crédits</p>
+    <div class="cards-grid">
+        {% for tc in cards %}
+            <div class="shop-card">
+                <h3 class="card-name">{{ tc.card.name }}</h3>
+                <p class="card-effect">{{ tc.card.effect }}</p>
+                <p class="card-cost">💎 Coût : <strong>{{ tc.card.cost }}</strong> crédits</p>
 
                 <form method="post" action="{{ path('app_tournament_buy_card', {id: tournament.id, cardId: tc.card.id}) }}">
-                    <button class="btn btn-sm btn-primary" {% if participant.credits < tc.card.cost %}disabled{% endif %}>
+                    <button 
+                        class="btn-buy {% if participant.credits < tc.card.cost %}disabled{% endif %}" 
+                        {% if participant.credits < tc.card.cost %}disabled{% endif %}
+                    >
                         Acheter
                     </button>
                 </form>
             </div>
-        </div>
-    {% else %}
-        <p>Aucune carte disponible pour ce tournoi.</p>
-    {% endfor %}
-</div>
+        {% else %}
+            <p class="empty-text">Aucune carte disponible pour ce tournoi.</p>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}

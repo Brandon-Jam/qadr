@@ -1,28 +1,83 @@
-<h1>Match {{ match.id }} - {{ match.player1.userIdentifier }} vs {{ match.player2.userIdentifier }}</h1>
+{% extends 'base.html.twig' %}
 
-<p>{{ match.player1.userIdentifier }} HP : {{ match.score1 }}</p>
-<p>{{ match.player2.userIdentifier }} HP : {{ match.score2 }}</p>
+{% block body %}
+<section class="match-view">
+    <h1 class="match-title">
+        ⚔️ Match #{{ match.id }}  
+        <span>{{ match.player1.userIdentifier }}</span> vs <span>{{ match.player2.userIdentifier }}</span>
+    </h1>
 
-<h2>Vos cartes</h2>
-<ul>
-{% for card in availableCards %}
-    <li>
-        {{ card.card.name }}
-      <form method="POST" action="{{ path('app_tournament_match_use_card', {
-    tournamentId: tournament.id,
-    id: match.id,
-    cardId: card.card.id
-}) }}">
-    <input type="hidden" name="_token" value="{{ csrf_token('use_card_' ~ card.id) }}">
-    <button type="submit" class="btn btn-primary btn-sm">Activer la carte</button>
-</form>
-        {% for label, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="alert alert-{{ label }}">{{ message }}</div>
-    {% endfor %}
-{% endfor %}
-    </li>
-{% else %}
-    <li>Aucune carte disponible.</li>
-{% endfor %}
-</ul>
+    <div class="hp-container">
+        <div class="player">
+            <h3>{{ match.player1.userIdentifier }}</h3>
+            <div class="hp-bar">
+                <div class="hp-fill" style="width: {{ match.score1 }}%;"></div>
+            </div>
+            <p class="hp-text">{{ match.score1 }} HP</p>
+        </div>
+
+        <div class="player">
+            <h3>{{ match.player2.userIdentifier }}</h3>
+            <div class="hp-bar">
+                <div class="hp-fill" style="width: {{ match.score2 }}%;"></div>
+            </div>
+            <p class="hp-text">{{ match.score2 }} HP</p>
+        </div>
+    </div>
+
+    <h2 class="section-title">🎴 Vos cartes disponibles</h2>
+
+    <div class="cards-grid">
+        {% if availableCards is not empty %}
+            {% for card in availableCards %}
+                <div class="match-card">
+                    <h4 class="card-name">{{ card.card.name }}</h4>
+                    <p class="card-effect">{{ card.card.effect }}</p>
+                    <p class="card-quantity">Quantité : {{ card.quantity }}</p>
+
+                    <form method="POST" action="{{ path('app_tournament_match_use_card', {
+                        tournamentId: tournament.id,
+                        id: match.id,
+                        cardId: card.card.id
+                    }) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('use_card_' ~ card.id) }}">
+                        <button type="submit" class="btn-activate">Activer</button>
+                    </form>
+
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ label }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-text">Aucune carte disponible pour vous.</p>
+        {% endif %}
+    </div>
+
+    <h2 class="section-title">🪄 Cartes utilisées pendant le match</h2>
+
+<div class="used-cards-grid">
+    {% if usedCards is not empty %}
+        {% for play in usedCards %}
+            <div class="used-card">
+                <p class="used-card-name">{{ play.card.name }}</p>
+                <p class="used-card-info">
+                    Utilisée par 
+                    <span class="used-by">
+                        {{ play.usedBy.userIdentifier }}
+                    </span>
+                    à {{ play.usedAt|date('H:i') }}
+                </p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="empty-text">Aucune carte utilisée pour le moment.</p>
+    {% endif %}
+</div>
+
+
+    <a href="{{ path('app_tournament_show', {id: tournament.id}) }}" class="btn-back">← Retour au tournoi</a>
+</section>
+{% endblock %}
