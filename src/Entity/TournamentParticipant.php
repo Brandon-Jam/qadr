@@ -38,6 +38,7 @@ private ?Tournament $tournament = null;
     public function __construct()
     {
         $this->tournamentParticipantCards = new ArrayCollection();
+        $this->cards = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -133,5 +134,15 @@ public function setCredits(int $credits): self
 {
     $this->credits = $credits;
     return $this;
+}
+
+#[ORM\OneToMany(mappedBy: 'participant', targetEntity: TournamentParticipantCard::class)]
+private Collection $cards;
+
+
+
+public function getCards(): Collection
+{
+    return $this->cards;
 }
 }

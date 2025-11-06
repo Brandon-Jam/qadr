@@ -15,7 +15,17 @@ class TournamentMatchRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, TournamentMatch::class);
     }
-
+public function findMatchesByUserAndTournament($user, $tournament): array
+{
+    return $this->createQueryBuilder('m')
+        ->where('m.tournament = :tournament')
+        ->andWhere('m.player1 = :user OR m.player2 = :user')
+        ->setParameter('tournament', $tournament)
+        ->setParameter('user', $user)
+        ->orderBy('m.id', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
     //    /**
     //     * @return TournamentMatch[] Returns an array of TournamentMatch objects
     //     */

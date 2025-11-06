@@ -16,14 +16,4 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/profil', name: 'app_profile')]
-    public function profile(): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        return $this->render('user/profile.html.twig', [
-            'participations' => $user->getTournamentParticipations(),
-        ]);
-    }
 }

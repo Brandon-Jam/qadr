@@ -8,13 +8,14 @@ use App\Entity\TournamentParticipant;
 use App\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\TournamentParticipantCard;
+use Symfony\Bundle\SecurityBundle\Security;
+use App\Repository\TournamentMatchRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\TournamentParticipantRepository;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Bundle\SecurityBundle\Security;
 
 final class TournamentController extends AbstractController
 {
@@ -205,4 +206,31 @@ public function inventory(
         'cards' => $cards,
     ]);
 }
+    #[Route('/tournament/{id}/profil', name: 'app_tournament_profil')]
+    public function tournamentprofil(
+        Tournament $tournament,
+        TournamentParticipantRepository $participantRepo,
+        TournamentMatchRepository $matchRepo
+    ): Response {
+        $user = $this->getUser();
+
+         $participant = $participantRepo->findOneBy([
+        'user' => $user,
+        'tournament' => $tournament,
+    ]);
+
+        if (!$participant) {
+            $this->addFlash('danger', 'Vous ne participez pas à ce tournoi.');
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+        }
+
+        $matches = $matchRepo->findMatchesByUserAndTournament($user, $tournament);
+
+        return $this->render('tournament/profil.html.twig', [
+            'tournament' => $tournament,
+            'participant' => $participant,
+            'matches' => $matches,
+        ]);
+    }
 }
+

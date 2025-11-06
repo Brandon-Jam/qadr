@@ -24,7 +24,7 @@
 
       {% if app.user %}
                     <li >
-                        <span >👤 {{ app.user.email }}</span>
+                        <a href="{{ path('app_profile') }}">{{ app.user.email }}</a>
                     </li>
                     <li >
                         <a  href="{{ path('app_logout') }}">Déconnexion</a>

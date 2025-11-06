@@ -1,0 +1,133 @@
+
+
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="profile-page">
+
+  {# 🔹 1️⃣ Identité du joueur #}
+  <div class="profile-header">
+    <img src="{{ asset('images/avatars/' ~ (user.avatar ?? 'default.png')) }}" alt="Avatar" class="avatar">
+    <div class="profile-info">
+      <h1 class="neon-text">{{ user.pseudo ?? user.email }}</h1>
+      <p class="profile-rank">Rang : <span class="highlight">Joueur confirmé</span></p>
+      <p class="profile-level">Niveau : <span class="highlight">12</span></p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  {# 🔹 2️⃣ Performance générale (déjà fait, juste à inclure ici) #}
+  <section class="profile-stats">
+  <h2 class="neon-title">⚔️ Statistiques générales</h2>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <p class="stat-value">{{ stats.totalMatches }}</p>
+      <p class="stat-label">Matchs joués</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-value">{{ stats.wins }}</p>
+      <p class="stat-label">Victoires</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-value">{{ stats.losses }}</p>
+      <p class="stat-label">Défaites</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-value">{{ stats.winRate }}%</p>
+      <p class="stat-label">Taux de victoire</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-value">{{ stats.tournaments }}</p>
+      <p class="stat-label">Tournois joués</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-value">{{ stats.avgScore }}</p>
+      <p class="stat-label">Score moyen</p>
+    </div>
+  </div>
+</section>
+  
+  <hr class="divider">
+
+  {# 🔹 3️⃣ Cartes et stratégie #}
+  <section class="profile-cards">
+    <h2 class="neon-title">🎴 Vos cartes & stratégie</h2>
+    {% if participations is not empty %}
+      <div class="cards-summary">
+        {% set totalCards = 0 %}
+        {% for p in participations %}
+          {% for card in p.cards %}
+            {% set totalCards = totalCards + card.quantity %}
+          {% endfor %}
+        {% endfor %}
+        <p>Total de cartes possédées : <span class="highlight">{{ totalCards }}</span></p>
+        <p>Style dominant : <span class="highlight">Offensif ⚔️</span></p>
+      </div>
+    {% else %}
+      <p class="empty-text">Aucune carte enregistrée pour le moment.</p>
+    {% endif %}
+  </section>
+
+  <hr class="divider">
+
+  {# 🔹 4️⃣ Crédits & économie #}
+  <section class="profile-economy">
+    <h2 class="neon-title">💰 Crédits & économie</h2>
+    {% set totalCredits = 0 %}
+    {% for p in participations %}
+      {% set totalCredits = totalCredits + p.credits %}
+    {% endfor %}
+    <div class="credits-summary">
+      <p>Total de crédits gagnés : <span class="highlight">{{ totalCredits }}</span></p>
+      <p>Moyenne par tournoi : <span class="highlight">{{ totalCredits / (participations|length ?: 1) | round(1) }}</span></p>
+      <p>Tournoi le plus rentable : <span class="highlight">Qadr Arena</span></p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  {# 🔹 5️⃣ Historique des tournois #}
+  <section class="profile-history">
+    <h2 class="neon-title">🏆 Historique des tournois</h2>
+    {% if participations is not empty %}
+      <div class="tournament-list">
+        {% for p in participations %}
+          <div class="tournament-card">
+            <h3>{{ p.tournament.name }}</h3>
+            <p>Crédits gagnés : {{ p.credits }}</p>
+            <p>Statut : <span class="highlight">En cours</span></p>
+            <a href="{{ path('app_tournament_profil', { id: p.tournament.id }) }}" class="btn-neon">Voir profil tournoi</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty-text">Tu n’as encore participé à aucun tournoi.</p>
+    {% endif %}
+  </section>
+
+  <hr class="divider">
+
+  {# 🔹 6️⃣ Badges & progression (bonus fun) #}
+  <section class="profile-badges">
+    <h2 class="neon-title">🎖️ Badges & progression</h2>
+    <div class="badges-grid">
+      <div class="badge unlocked">
+        🥇 Première victoire
+      </div>
+      <div class="badge unlocked">
+        🔥 10 matchs joués
+      </div>
+      <div class="badge locked">
+        💎 Champion d’un tournoi
+      </div>
+      <div class="badge locked">
+        🎴 Collectionneur de cartes
+      </div>
+    </div>
+  </section>
+
+</section>
+{% endblock %}

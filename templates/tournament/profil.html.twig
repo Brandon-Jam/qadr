@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="tournament-profil">
+  <h1>🎮 Profil tournoi : {{ tournament.name }}</h1>
+
+  <p>Rôle : {{ participant.role|default('Joueur') }}</p>
+  <p>Crédits : {{ participant.credits }}</p>
+
+  <h2>🎴 Vos cartes</h2>
+  {% for card in participant.cards %}
+    <div class="card">
+      <p>{{ card.card.name }} × {{ card.quantity }}</p>
+    </div>
+  {% else %}
+    <p>Aucune carte pour ce tournoi.</p>
+  {% endfor %}
+
+  <h2>⚔️ Vos matchs</h2>
+  {% if matches is not empty %}
+    <ul>
+      {% for match in matches %}
+        <li>
+          <a href="{{ path('app_tournament_match_show', { tournamentId: tournament.id, id: match.id }) }}">
+            {{ match.player1.userIdentifier }} vs {{ match.player2.userIdentifier }}
+          </a>
+          {% if match.winner %}
+            — Gagnant : {{ match.winner.userIdentifier }}
+          {% else %}
+            — En attente
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Aucun match joué pour le moment.</p>
+  {% endif %}
+</section>
+{% endblock %}
