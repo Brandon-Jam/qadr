@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="create-match">
+    <h1>⚔️ Créer un match pour {{ tournament.name }}</h1>
+
+    <form method="POST">
+        <label for="player1">Joueur 1 :</label>
+        <select name="player1" id="player1" required>
+            <option value="">-- Sélectionnez --</option>
+            {% for p in participants %}
+                <option value="{{ p.id }}">{{ p.user.pseudo ?? p.user.email }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="player2">Joueur 2 :</label>
+        <select name="player2" id="player2" required>
+            <option value="">-- Sélectionnez --</option>
+            {% for p in participants %}
+                <option value="{{ p.id }}">{{ p.user.pseudo ?? p.user.email }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn btn-neon mt-3">Créer le match</button>
+    </form>
+
+    <a href="{{ path('app_tournament_match_index', { tournamentId: tournament.id }) }}" class="btn-back">← Retour</a>
+</section>
+{% endblock %}

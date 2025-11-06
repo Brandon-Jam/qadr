@@ -1769,3 +1769,14 @@ body {
   font-size: 1.2em;
   margin-top: 15px;
 }
+
+.btn-manage {
+  background: #e60073;
+  color: white;
+  border: 1px solid #ff99cc;
+  text-shadow: 0 0 6px #ff33cc;
+}
+.btn-manage:hover {
+  background: #ff3399;
+  box-shadow: 0 0 10px #ff66cc;
+}

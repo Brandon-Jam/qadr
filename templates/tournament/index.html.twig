@@ -33,7 +33,9 @@
           </a>
 
           <div class="tournament-actions">
-            {% if app.user %}
+            {% if app.user %}{% if app.user in tournament.referees %}
+  <p>👨‍⚖️ Vous êtes arbitre de ce tournoi.</p>
+{% endif %}
               {% if tournament.id in registeredTournaments %}
                 <button class="btn-joined" disabled>Déjà inscrit ✅</button>
                 {% elseif tournament.tournamentParticipants|length >= tournament.availableSlots %}

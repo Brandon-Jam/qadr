@@ -38,6 +38,68 @@ class MatchController extends AbstractController
         ]);
     }
 
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+public function new(
+    int $tournamentId,
+    Request $request,
+    TournamentRepository $tournamentRepo,
+    TournamentParticipantRepository $participantRepo,
+    EntityManagerInterface $em,
+    Security $security
+): Response {
+    $tournament = $tournamentRepo->find($tournamentId);
+    $user = $security->getUser();
+
+    if (!$tournament) {
+        throw $this->createNotFoundException('Tournoi introuvable.');
+    }
+
+    // ✅ Vérifie que l'utilisateur est arbitre de ce tournoi
+    if (!$tournament->getReferees()->contains($user)) {
+        $this->addFlash('danger', '⛔ Vous n’êtes pas arbitre de ce tournoi.');
+        return $this->redirectToRoute('app_tournament_show', ['id' => $tournamentId]);
+    }
+
+    // ✅ Récupère les participants pour peupler le formulaire
+    $participants = $participantRepo->findBy(['tournament' => $tournament]);
+
+    if ($request->isMethod('POST')) {
+        $player1Id = $request->request->get('player1');
+        $player2Id = $request->request->get('player2');
+
+        if ($player1Id && $player2Id && $player1Id !== $player2Id) {
+            $player1 = $participants[array_search($player1Id, array_column($participants, 'id'))] ?? null;
+            $player2 = $participants[array_search($player2Id, array_column($participants, 'id'))] ?? null;
+
+            // ⚠️ Sécurité : on récupère les bons User
+            $player1User = $participantRepo->find($player1Id)->getUser();
+            $player2User = $participantRepo->find($player2Id)->getUser();
+
+            $match = new \App\Entity\TournamentMatch();
+            $match->setTournament($tournament);
+            $match->setPlayer1($player1User);
+            $match->setPlayer2($player2User);
+            $match->setCreatedAt(new \DateTimeImmutable());
+            $match->setStartTime(new \DateTimeImmutable());
+            $match->setRound('Phase 1');
+            $match->setStatus('pending');
+
+            $em->persist($match);
+            $em->flush();
+
+            $this->addFlash('success', '✅ Match créé avec succès !');
+            return $this->redirectToRoute('app_tournament_match_index', ['tournamentId' => $tournamentId]);
+        }
+
+        $this->addFlash('danger', '❌ Sélection invalide : choisissez deux joueurs différents.');
+    }
+
+    return $this->render('match/new.html.twig', [
+        'tournament' => $tournament,
+        'participants' => $participants,
+    ]);
+}
+
 #[Route('/{id}', name: 'show', methods: ['GET', 'POST'])]
 public function show(
     int $tournamentId,
@@ -56,40 +118,38 @@ public function show(
         throw $this->createNotFoundException('Match ou tournoi invalide.');
     }
 
-    $user = $this->getUser();
+    $user = $security->getUser();
 
-    // Vérifier que l'utilisateur participe bien au tournoi
+    // ✅ Vérifier que l'utilisateur participe bien au tournoi
     $participant = $participantRepo->findOneBy([
         'user' => $user,
         'tournament' => $tournament,
     ]);
 
-    if (!$participant) {
-        $this->addFlash('danger', 'Vous ne participez pas à ce tournoi.');
-        return $this->redirectToRoute('app_tournament_show', [
-            'id' => $tournamentId,
-        ]);
+    // ✅ Vérifier si l'utilisateur est arbitre du tournoi (en tenant compte du ManyToMany)
+    $isReferee = $tournament->getReferees()->contains($user);
+
+    if (!$participant && !$isReferee) {
+        $this->addFlash('danger', 'Accès refusé : vous n’êtes ni joueur ni arbitre de ce tournoi.');
+        return $this->redirectToRoute('app_tournament_show', ['id' => $tournamentId]);
     }
 
-    $isReferee = $this->isGranted('ROLE_REFEREE') || $match->getTournament()->getReferee() === $user;
-
-    // Gestion des POST (score + validate)
+    // ✅ Gestion des POST (score + validation)
     if ($request->isMethod('POST')) {
         $action = $request->request->get('action');
 
-        // ✅ Saisie des scores par le referee
+        // --- Saisie des scores ---
         if ($action === 'score') {
             if ($isReferee) {
                 $score1Raw = $request->request->get('score1');
-                $score2Raw = $request->request->get('score2');
+$score2Raw = $request->request->get('score2');
 
-                $score1 = ($score1Raw !== '' && $score1Raw !== null) ? (int) $score1Raw : null;
-                $score2 = ($score2Raw !== '' && $score2Raw !== null) ? (int) $score2Raw : null;
+$score1 = ($score1Raw !== '' && $score1Raw !== null) ? (int) $score1Raw : null;
+$score2 = ($score2Raw !== '' && $score2Raw !== null) ? (int) $score2Raw : null;
 
-                $match->setScore1($score1);
-                $match->setScore2($score2);
+                $match->setScore1($score1 ?: null);
+                $match->setScore2($score2 ?: null);
 
-                // ✅ Détermine le vainqueur uniquement si les deux scores sont renseignés
                 if ($score1 !== null && $score2 !== null) {
                     if ($score1 > $score2) {
                         $match->setWinner($match->getPlayer1());
@@ -98,89 +158,83 @@ public function show(
                     } else {
                         $match->setWinner(null); // égalité
                     }
-                } else {
-                    $match->setWinner(null);
                 }
 
                 $em->flush();
                 $this->addFlash('success', '🏆 Scores enregistrés avec succès !');
-
-                return $this->redirectToRoute('app_tournament_match_show', [
-                    'tournamentId' => $tournamentId,
-                    'id' => $id,
-                ]);
             } else {
                 $this->addFlash('danger', 'Accès refusé pour modifier les scores.');
-                return $this->redirectToRoute('app_tournament_match_show', [
-                    'tournamentId' => $tournamentId,
-                    'id' => $id,
-                ]);
             }
-        }
 
-        // ✅ Validation du match
-if ($request->isMethod('POST') && $request->request->get('action') === 'validate') {
-    if ($this->isGranted('ROLE_REFEREE') || $match->getTournament()->getReferee() === $user) {
-        $match->setIsValidated(true);
-
-        $winner = null;
-        $loser = null;
-
-        // Détermination du gagnant selon les scores
-        if ($match->getScore1() !== null && $match->getScore2() !== null) {
-            if ($match->getScore1() > $match->getScore2()) {
-                $winner = $match->getPlayer1();
-                $loser = $match->getPlayer2();
-            } elseif ($match->getScore2() > $match->getScore1()) {
-                $winner = $match->getPlayer2();
-                $loser = $match->getPlayer1();
-            }
-        }
-
-        // 💰 Attribution des crédits via TournamentParticipant
-        if ($winner && $loser) {
-            $winnerParticipant = $participantRepo->findOneBy([
-                'user' => $winner,
-                'tournament' => $match->getTournament(),
+            return $this->redirectToRoute('app_tournament_match_show', [
+                'tournamentId' => $tournamentId,
+                'id' => $id,
             ]);
-
-            $loserParticipant = $participantRepo->findOneBy([
-                'user' => $loser,
-                'tournament' => $match->getTournament(),
-            ]);
-
-            if ($winnerParticipant && $loserParticipant) {
-                $winnerParticipant->setCredits($winnerParticipant->getCredits() + 10);
-                $loserParticipant->setCredits($loserParticipant->getCredits() + 5);
-                $em->persist($winnerParticipant);
-                $em->persist($loserParticipant);
-            }
         }
 
-        $em->flush();
-        $this->addFlash('success', '✅ Match validé et crédits attribués !');
+        // --- Validation du match ---
+        if ($action === 'validate') {
+            if ($isReferee) {
+                $match->setIsValidated(true);
 
-        return $this->redirectToRoute('app_tournament_match_show', [
-            'tournamentId' => $tournamentId,
-            'id' => $id,
-        ]);
-    }
-}
-    }
-    // ✅ Cartes disponibles pour ce joueur
-    $availableCards = $em->getRepository(TournamentParticipantCard::class)
-        ->createQueryBuilder('c')
-        ->where('c.participant = :participant')
-        ->andWhere('c.quantity > 0')
-        ->setParameter('participant', $participant)
-        ->getQuery()
-        ->getResult();
+                $winner = null;
+                $loser = null;
 
-    // ✅ Cartes déjà utilisées dans ce match
-    $usedCards = $em->getRepository(\App\Entity\MatchCardPlay::class)->findBy(
-        ['match' => $match],
-        ['usedAt' => 'DESC']
-    );
+                // Détermination du gagnant selon les scores
+                if ($match->getScore1() !== null && $match->getScore2() !== null) {
+                    if ($match->getScore1() > $match->getScore2()) {
+                        $winner = $match->getPlayer1();
+                        $loser = $match->getPlayer2();
+                    } elseif ($match->getScore2() > $match->getScore1()) {
+                        $winner = $match->getPlayer2();
+                        $loser = $match->getPlayer1();
+                    }
+                }
+
+                // Attribution des crédits
+                if ($winner && $loser) {
+                    $winnerParticipant = $participantRepo->findOneBy([
+                        'user' => $winner,
+                        'tournament' => $match->getTournament(),
+                    ]);
+                    $loserParticipant = $participantRepo->findOneBy([
+                        'user' => $loser,
+                        'tournament' => $match->getTournament(),
+                    ]);
+
+                    if ($winnerParticipant && $loserParticipant) {
+                        $winnerParticipant->setCredits($winnerParticipant->getCredits() + 10);
+                        $loserParticipant->setCredits($loserParticipant->getCredits() + 5);
+                        $em->persist($winnerParticipant);
+                        $em->persist($loserParticipant);
+                    }
+                }
+
+                $em->flush();
+                $this->addFlash('success', '✅ Match validé et crédits attribués !');
+            }
+
+            return $this->redirectToRoute('app_tournament_match_show', [
+                'tournamentId' => $tournamentId,
+                'id' => $id,
+            ]);
+        }
+    }
+
+    // --- Cartes disponibles et cartes utilisées ---
+    $availableCards = [];
+    if ($participant) {
+        $availableCards = $em->getRepository(TournamentParticipantCard::class)
+            ->createQueryBuilder('c')
+            ->where('c.participant = :participant')
+            ->andWhere('c.quantity > 0')
+            ->setParameter('participant', $participant)
+            ->getQuery()
+            ->getResult();
+    }
+
+    $usedCards = $em->getRepository(\App\Entity\MatchCardPlay::class)
+        ->findBy(['match' => $match], ['usedAt' => 'DESC']);
 
     return $this->render('match/show.html.twig', [
         'tournament' => $tournament,
@@ -189,6 +243,7 @@ if ($request->isMethod('POST') && $request->request->get('action') === 'validate
         'usedCards' => $usedCards,
     ]);
 }
+
 
 
 
@@ -310,6 +365,8 @@ public function useCard(
         'id' => $match->getId(),
     ]);
 }
+
+
 
 }
 

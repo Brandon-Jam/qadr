@@ -6,7 +6,9 @@
 <section class="match-list-section">
     <h1 class="page-title">🏆 Matchs du tournoi : {{ tournament.name }}</h1>
     <p class="tournament-info">📍 {{ tournament.location }} | 🗓 {{ tournament.date|date('d/m/Y H:i') }}</p>
-
+{% if app.user in tournament.referees %}
+  <p>👨‍⚖️ Vous êtes arbitre de ce tournoi.</p>
+{% endif %}
     {% if matches is empty %}
         <p class="empty-text">Aucun match n’a encore été enregistré pour ce tournoi.</p>
     {% else %}
@@ -37,7 +39,11 @@
 
                         <div class="match-footer">
                             <p class="status text-warning">À jouer</p>
-                            <a href="{{ path('app_tournament_match_show', {tournamentId: tournament.id, id: match.id}) }}" class="btn-view">Voir</a>
+                            {% if app.user in tournament.referees %}
+    <a href="{{ path('app_tournament_match_show', {tournamentId: tournament.id, id: match.id}) }}" class="btn-manage">Manager</a>
+{% else %}
+    <a href="{{ path('app_tournament_match_show', {tournamentId: tournament.id, id: match.id}) }}" class="btn-view">Voir</a>
+{% endif %}
                         </div>
                     </div>
                 {% endif %}

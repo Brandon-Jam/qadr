@@ -51,7 +51,7 @@
     {% endif %}
 
     {# --- Formulaire pour le referee : saisie des scores --- #}
-    {% if is_granted('ROLE_REFEREE') or app.user == match.tournament.referee %}
+    {% if is_granted('ROLE_REFEREE') or match.tournament.referees.contains(app.user) %}
         <form method="post" class="score-form">
             <input type="hidden" name="action" value="score">
             <div class="score-inputs">
@@ -118,7 +118,7 @@
     </div>
 
     {# --- Validation finale du match (referee only) --- #}
-    {% if (is_granted('ROLE_REFEREE') or app.user == match.tournament.referee) and not match.isValidated %}
+    {% if (is_granted('ROLE_REFEREE') or match.tournament.referees.contains(app.user)) and not match.isValidated %}
         <form method="post" class="validate-form">
             <input type="hidden" name="action" value="validate">
             <button type="submit" class="btn btn-neon">✅ Valider le match</button>

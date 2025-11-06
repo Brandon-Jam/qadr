@@ -69,6 +69,7 @@ class Tournament
         $this->tournamentMatches = new ArrayCollection();
         $this->tournamentParticipants = new ArrayCollection();
         $this->tournamentCards = new ArrayCollection();
+         $this->referees = new ArrayCollection(); 
     }
 
     public function getId(): ?int
@@ -282,4 +283,31 @@ public function getParticipants(): Collection
     $this->image = $image;
     return $this;
     }
+
+    #[ORM\ManyToMany(targetEntity: User::class)]
+#[ORM\JoinTable(name: "tournament_referees")]
+private Collection $referees;
+
+
+
+// ✅ Getters / setters
+public function getReferees(): Collection
+{
+    return $this->referees;
+}
+
+public function addReferee(User $referee): self
+{
+    if (!$this->referees->contains($referee)) {
+        $this->referees->add($referee);
+    }
+
+    return $this;
+}
+
+public function removeReferee(User $referee): self
+{
+    $this->referees->removeElement($referee);
+    return $this;
+}
 }

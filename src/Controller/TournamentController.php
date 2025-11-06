@@ -103,7 +103,7 @@ public function registerToTournament(
 public function shop(Tournament $tournament, EntityManagerInterface $em): Response
 {
     $user = $this->getUser();
-
+    
     // Récupère le TournamentParticipant du joueur
     $participant = $em->getRepository(TournamentParticipant::class)
         ->findOneBy(['user' => $user, 'tournament' => $tournament]);
