@@ -68,21 +68,22 @@ public function registerToTournament(
     $user = $this->getUser();
 
     
-      // Vérifie si l'utilisateur est déjà inscrit
-    foreach ($tournament->getTournamentParticipants() as $participant) {
-        if ($participant->getUser()->getId() === $user->getId()) {
-            $this->addFlash('warning', 'Vous êtes déjà inscrit à ce tournoi.');
-            
-            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
-        }
+    // 🚫 Empêche les arbitres de s'inscrire
+    if (in_array('ROLE_REFEREE', $user->getRoles())) {
+        $this->addFlash('danger', 'Un arbitre ne peut pas participer à un tournoi.');
+        return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
     }
 
+    // ✅ Vérifie si déjà inscrit
+    $existing = $em->getRepository(TournamentParticipant::class)->findOneBy([
+        'user' => $user,
+        'tournament' => $tournament
+    ]);
 
-if (count($tournament->getTournamentParticipants()) >= $tournament->getAvailableSlots()) {
-    $this->addFlash('error', 'Ce tournoi est complet.');
-    return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
-   
-}
+    if ($existing) {
+        $this->addFlash('info', 'Vous êtes déjà inscrit à ce tournoi.');
+        return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+    }
 
 
     $participant = new TournamentParticipant();
@@ -188,10 +189,12 @@ public function inventory(
         'tournament' => $tournament,
     ]);
 
-    if (!$participant) {
-        $this->addFlash('error', 'Vous n’êtes pas inscrit à ce tournoi.');
-        return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
-    }
+    if (!$participant && !in_array('ROLE_REFEREE', $user->getRoles())) {
+    $this->addFlash('danger', 'Accès refusé : vous devez être joueur ou arbitre pour voir ce match.');
+    return $this->redirectToRoute('app_tournament_show', [
+        'id' => $tournamentId,
+    ]);
+}
 
     // Récupère les cartes possédées
     $cards = $participant->getTournamentParticipantCards();

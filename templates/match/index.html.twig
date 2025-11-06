@@ -11,20 +11,57 @@
         <p class="empty-text">Aucun match n’a encore été enregistré pour ce tournoi.</p>
     {% else %}
 
+        {# ===================== MATCHS À JOUER ===================== #}
+        <h2 class="section-title">🕐 Matchs à jouer</h2>
+        <div class="matches-grid">
+            {% set hasPending = false %}
+            {% for match in matches %}
+                {% if match.score1 is null and match.score2 is null %}
+                    {% set hasPending = true %}
+                    <div class="match-card">
+                        <div class="player-card player-left">
+                            <div class="avatar neon-avatar-blue">
+                                <img src="{{ asset('img/avatars/' ~ match.player1.avatar|default('default.png')) }}" alt="">
+                            </div>
+                            <h3>{{ match.player1.userIdentifier }}</h3>
+                        </div>
+
+                        <div class="vs-circle">VS</div>
+
+                        <div class="player-card player-right">
+                            <div class="avatar neon-avatar-pink">
+                                <img src="{{ asset('img/avatars/' ~ match.player2.avatar|default('default.png')) }}" alt="">
+                            </div>
+                            <h3>{{ match.player2.userIdentifier }}</h3>
+                        </div>
+
+                        <div class="match-footer">
+                            <p class="status text-warning">À jouer</p>
+                            <a href="{{ path('app_tournament_match_show', {tournamentId: tournament.id, id: match.id}) }}" class="btn-view">Voir</a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% if not hasPending %}
+                <p class="empty-text">Aucun match à jouer.</p>
+            {% endif %}
+        </div>
+
+        <hr class="section-separator">
+
         {# ===================== MATCHS EN COURS ===================== #}
-        <h2 class="section-title">🕹️ Matchs en cours</h2>
+        <h2 class="section-title">⚔️ Matchs en cours</h2>
         <div class="matches-grid">
             {% set hasActive = false %}
             {% for match in matches %}
-                {% if match.score1 > 0 and match.score2 > 0 %}
+                {% if match.score1 is not null and match.score2 is not null and match.score1 > 0 and match.score2 > 0 %}
                     {% set hasActive = true %}
                     <div class="match-card">
                         <div class="player-card player-left">
                             <div class="avatar neon-avatar-blue">
-                                <img src="{{ asset('img/avatars/' ~ match.player1.avatar|default('default.png')) }}" alt="Avatar joueur 1">
+                                <img src="{{ asset('img/avatars/' ~ match.player1.avatar|default('default.png')) }}" alt="">
                             </div>
                             <h3>{{ match.player1.userIdentifier }}</h3>
-                            <p class="level">NIV {{ match.player1.level|default(1) }}</p>
                             <p class="score">{{ match.score1 }} HP</p>
                         </div>
 
@@ -32,16 +69,15 @@
 
                         <div class="player-card player-right">
                             <div class="avatar neon-avatar-pink">
-                                <img src="{{ asset('img/avatars/' ~ match.player2.avatar|default('default.png')) }}" alt="Avatar joueur 2">
+                                <img src="{{ asset('img/avatars/' ~ match.player2.avatar|default('default.png')) }}" alt="">
                             </div>
                             <h3>{{ match.player2.userIdentifier }}</h3>
-                            <p class="level">NIV {{ match.player2.level|default(1) }}</p>
                             <p class="score">{{ match.score2 }} HP</p>
                         </div>
 
                         <div class="match-footer">
                             <p class="status text-info">En cours</p>
-                            <a href="{{ path('app_tournament_match_show', {tournamentId: tournament.id, id: match.id}) }}" class="btn-view">Voir le match</a>
+                            <a href="{{ path('app_tournament_match_show', {tournamentId: tournament.id, id: match.id}) }}" class="btn-view">Voir</a>
                         </div>
                     </div>
                 {% endif %}
@@ -58,7 +94,7 @@
         <div class="matches-grid">
             {% set hasFinished = false %}
             {% for match in matches %}
-                {% if match.score1 == 0 or match.score2 == 0 %}
+                {% if match.score1 is not null and match.score2 is not null and (match.score1 == 0 or match.score2 == 0) %}
                     {% set hasFinished = true %}
                     {% set winner = match.score1 > match.score2 ? match.player1 : match.player2 %}
                     {% set loser = match.score1 > match.score2 ? match.player2 : match.player1 %}
@@ -66,34 +102,26 @@
                     <div class="match-card match-finished">
                         <div class="player-card player-left {% if winner.id == match.player1.id %}winner{% else %}loser{% endif %}">
                             <div class="avatar {% if winner.id == match.player1.id %}neon-avatar-blue{% else %}avatar-gray{% endif %}">
-                                <img src="{{ asset('img/avatars/' ~ match.player1.avatar|default('default.png')) }}" alt="Avatar joueur 1">
+                                <img src="{{ asset('img/avatars/' ~ match.player1.avatar|default('default.png')) }}" alt="">
                             </div>
                             <h3>{{ match.player1.userIdentifier }}</h3>
-                            <p class="result-label">
-                                {% if winner.id == match.player1.id %}
-                                    🏆 Gagnant
-                                {% else %}
-                                    ❌ Perdant
-                                {% endif %}
-                            </p>
                             <p class="score">{{ match.score1 }} HP</p>
+                            <p class="result-label">
+                                {% if winner.id == match.player1.id %}🏆 Gagnant{% else %}❌ Perdant{% endif %}
+                            </p>
                         </div>
 
                         <div class="vs-circle">VS</div>
 
                         <div class="player-card player-right {% if winner.id == match.player2.id %}winner{% else %}loser{% endif %}">
                             <div class="avatar {% if winner.id == match.player2.id %}neon-avatar-pink{% else %}avatar-gray{% endif %}">
-                                <img src="{{ asset('img/avatars/' ~ match.player2.avatar|default('default.png')) }}" alt="Avatar joueur 2">
+                                <img src="{{ asset('img/avatars/' ~ match.player2.avatar|default('default.png')) }}" alt="">
                             </div>
                             <h3>{{ match.player2.userIdentifier }}</h3>
-                            <p class="result-label">
-                                {% if winner.id == match.player2.id %}
-                                    🏆 Gagnant
-                                {% else %}
-                                    ❌ Perdant
-                                {% endif %}
-                            </p>
                             <p class="score">{{ match.score2 }} HP</p>
+                            <p class="result-label">
+                                {% if winner.id == match.player2.id %}🏆 Gagnant{% else %}❌ Perdant{% endif %}
+                            </p>
                         </div>
 
                         <div class="match-footer">
@@ -107,6 +135,7 @@
                 <p class="empty-text">Aucun match terminé.</p>
             {% endif %}
         </div>
+
     {% endif %}
 </section>
 {% endblock %}

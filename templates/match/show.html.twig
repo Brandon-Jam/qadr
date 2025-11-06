@@ -2,8 +2,7 @@
 
 {% block body %}
 <section class="match-view">
-    <h1 class="match-title">
-        ⚔️ Match #{{ match.id }}  
+    <h1 class="match-title"> 
         <span>{{ match.player1.userIdentifier }}</span> vs <span>{{ match.player2.userIdentifier }}</span>
     </h1>
 
@@ -11,19 +10,61 @@
         <div class="player">
             <h3>{{ match.player1.userIdentifier }}</h3>
             <div class="hp-bar">
-                <div class="hp-fill" style="width: {{ match.score1 }}%;"></div>
+                <div class="hp-fill" style="width: {{ match.score1 is not null ? match.score1 : 0 }}%;"></div>
             </div>
-            <p class="hp-text">{{ match.score1 }} HP</p>
+            <p class="hp-text">
+                {% if match.score1 is not null %}
+                    {{ match.score1 }} HP
+                {% else %}
+                    HP non défini
+                {% endif %}
+            </p>
         </div>
 
         <div class="player">
             <h3>{{ match.player2.userIdentifier }}</h3>
             <div class="hp-bar">
-                <div class="hp-fill" style="width: {{ match.score2 }}%;"></div>
+                <div class="hp-fill" style="width: {{ match.score2 is not null ? match.score2 : 0 }}%;"></div>
             </div>
-            <p class="hp-text">{{ match.score2 }} HP</p>
+            <p class="hp-text">
+                {% if match.score2 is not null %}
+                    {{ match.score2 }} HP
+                {% else %}
+                    HP non défini
+                {% endif %}
+            </p>
         </div>
     </div>
+
+    {# --- Affichage du score + statut du match --- #}
+    {% if match.score1 is not null and match.score2 is not null %}
+        <div class="match-score neon-text">
+            <p>Score : {{ match.score1 }} - {{ match.score2 }}</p>
+            {% if match.winner %}
+                <p>🏆 Vainqueur : {{ match.winner.userIdentifier }}</p>
+            {% else %}
+                <p>⚔️ Match en attente de résultat</p>
+            {% endif %}
+        </div>
+    {% else %}
+        <p class="match-score neon-text">⚔️ Match en attente de résultat</p>
+    {% endif %}
+
+    {# --- Formulaire pour le referee : saisie des scores --- #}
+    {% if is_granted('ROLE_REFEREE') or app.user == match.tournament.referee %}
+        <form method="post" class="score-form">
+            <input type="hidden" name="action" value="score">
+            <div class="score-inputs">
+                <label>{{ match.player1.userIdentifier }} :</label>
+                <input type="number" name="score1" min="0" value="{{ match.score1 ?? '' }}">
+
+                <label>{{ match.player2.userIdentifier }} :</label>
+                <input type="number" name="score2" min="0" value="{{ match.score2 ?? '' }}">
+
+                <button type="submit" class="btn btn-neon">💾 Enregistrer les scores</button>
+            </div>
+        </form>
+    {% endif %}
 
     <h2 class="section-title">🎴 Vos cartes disponibles</h2>
 
@@ -41,14 +82,13 @@
                         cardId: card.card.id
                     }) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('use_card_' ~ card.id) }}">
-                        <button type="submit" class="btn-activate">Activer</button>
-                    </form>
 
-                    {% for label, messages in app.flashes %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ label }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endfor %}
+                        <button type="submit"
+                                class="btn-activate"
+                                {% if match.score1 is not null and match.score1 <= 0 or match.score2 is not null and match.score2 <= 0 %}disabled{% endif %}>
+                            Activer
+                        </button>
+                    </form>
                 </div>
             {% endfor %}
         {% else %}
@@ -58,25 +98,32 @@
 
     <h2 class="section-title">🪄 Cartes utilisées pendant le match</h2>
 
-<div class="used-cards-grid">
-    {% if usedCards is not empty %}
-        {% for play in usedCards %}
-            <div class="used-card">
-                <p class="used-card-name">{{ play.card.name }}</p>
-                <p class="used-card-info">
-                    Utilisée par 
-                    <span class="used-by">
-                        {{ play.usedBy.userIdentifier }}
-                    </span>
-                    à {{ play.usedAt|date('H:i') }}
-                </p>
-            </div>
-        {% endfor %}
-    {% else %}
-        <p class="empty-text">Aucune carte utilisée pour le moment.</p>
-    {% endif %}
-</div>
+    <div class="used-cards-grid">
+        {% if usedCards is not empty %}
+            {% for play in usedCards %}
+                <div class="used-card">
+                    <p class="used-card-name">{{ play.card.name }}</p>
+                    <p class="used-card-info">
+                        Utilisée par 
+                        <span class="used-by">
+                            {{ play.usedBy.userIdentifier }}
+                        </span>
+                        à {{ play.usedAt|date('H:i') }}
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-text">Aucune carte utilisée pour le moment.</p>
+        {% endif %}
+    </div>
 
+    {# --- Validation finale du match (referee only) --- #}
+    {% if (is_granted('ROLE_REFEREE') or app.user == match.tournament.referee) and not match.isValidated %}
+        <form method="post" class="validate-form">
+            <input type="hidden" name="action" value="validate">
+            <button type="submit" class="btn btn-neon">✅ Valider le match</button>
+        </form>
+    {% endif %}
 
     <a href="{{ path('app_tournament_show', {id: tournament.id}) }}" class="btn-back">← Retour au tournoi</a>
 </section>

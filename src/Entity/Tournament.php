@@ -43,6 +43,9 @@ class Tournament
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isValidated = false;
+
     /**
      * @var Collection<int, TournamentMatch>
      */

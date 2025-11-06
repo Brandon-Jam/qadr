@@ -78,6 +78,7 @@
   {% else %}
     <a href="{{ path('app_login') }}" class="btn-login-neon">Se connecter</a>
   {% endif %}
+  <a href="{{ path('app_tournament_match_index', {tournamentId: tournament.id}) }}" class="btn-matches">🎮 Voir les matchs du tournoi</a>
 </div>
 
 <section class="tournament-cards">

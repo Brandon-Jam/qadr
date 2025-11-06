@@ -31,6 +31,9 @@ class TournamentMatch
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isValidated = false;
+
     #[ORM\ManyToOne(inversedBy: 'tournamentMatches')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Tournament $tournament = null;
@@ -170,5 +173,16 @@ class TournamentMatch
         return $this;
     }
 
+    public function isValidated(): bool
+{
+    return $this->isValidated;
+}
+
+public function setIsValidated(bool $isValidated): self
+{
+    $this->isValidated = $isValidated;
+
+    return $this;
+}
 
 }
