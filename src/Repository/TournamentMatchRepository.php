@@ -66,6 +66,47 @@ class TournamentMatchRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function hasOngoingMatch(TournamentParticipant $participant): bool
+{
+    return (bool) $this->createQueryBuilder('m')
+        ->where('(m.player1 = :p OR m.player2 = :p)')
+        ->andWhere('m.isValidated = false')
+        ->andWhere('m.winner IS NULL')
+        ->setParameter('p', $participant)
+        ->getQuery()
+        ->getOneOrNullResult();
+}
+
+public function countWinsBetween(
+    TournamentParticipant $a,
+    TournamentParticipant $b
+): int {
+    $qb = $this->createQueryBuilder('m');
+
+    $qb->select('COUNT(m.id)')
+        ->where(
+            $qb->expr()->orX(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('m.player1', ':a'),
+                    $qb->expr()->eq('m.player2', ':b'),
+                    $qb->expr()->eq('m.winner', ':userA')
+                ),
+                $qb->expr()->andX(
+                    $qb->expr()->eq('m.player1', ':b'),
+                    $qb->expr()->eq('m.player2', ':a'),
+                    $qb->expr()->eq('m.winner', ':userB')
+                )
+            )
+        )
+        ->setParameter('a', $a)
+        ->setParameter('b', $b)
+        ->setParameter('userA', $a->getUser())
+        ->setParameter('userB', $b->getUser());
+
+    return (int) $qb->getQuery()->getSingleScalarResult();
+}
+
 }
 
     //    /**

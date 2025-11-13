@@ -31,6 +31,9 @@ class TournamentParticipant
     #[ORM\ManyToOne(inversedBy: 'participants')]
     private ?Tournament $tournament = null;
 
+    #[ORM\Column(type: 'integer')]
+    private int $hp = 10;
+
     // ----- MATCH INVITES -----
     #[ORM\OneToMany(mappedBy: 'challenger', targetEntity: MatchInvite::class, cascade: ['remove'])]
     private Collection $matchInvitesSent;
@@ -151,6 +154,17 @@ class TournamentParticipant
         $this->creditsSpent = $creditsSpent;
         return $this;
     }
+
+    public function getHp(): int
+{
+    return $this->hp;
+}
+
+public function setHp(int $hp): self
+{
+    $this->hp = $hp;
+    return $this;
+}
 
     // -----------------------------------
     // CARDS

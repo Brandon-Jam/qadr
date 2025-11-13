@@ -28,12 +28,30 @@ class MatchInviteController extends AbstractController
 
         $opponent = $em->getRepository(TournamentParticipant::class)->find($opponentId);
 
-        // prevent self-challenge
+        // Prevent self-challenge
         if ($challenger->getId() === $opponent->getId()) {
             throw $this->createAccessDeniedException("Vous ne pouvez pas vous défier vous-même.");
         }
 
-        // check if already pending invite
+        $matchRepo = $em->getRepository(TournamentMatch::class);
+        $participantRepo = $em->getRepository(TournamentParticipant::class);
+
+        // Count alive players (HP > 0)
+        $alive = $participantRepo->countAlivePlayers($tournament);
+
+        // Restriction active seulement si plus de 8 joueurs vivants
+        if ($alive > 8) {
+            $wins = $matchRepo->countWinsBetween($challenger, $opponent);
+            if ($wins >= 2) {
+                $this->addFlash(
+                    'danger',
+                    "Limite de 2 victoires déjà atteinte contre ce joueur (active car plus de 8 joueurs vivants)."
+                );
+                return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+            }
+        }
+
+        // Existing pending invite
         $existing = $em->getRepository(MatchInvite::class)->findOneBy([
             'challenger' => $challenger,
             'opponent' => $opponent,
@@ -45,6 +63,7 @@ class MatchInviteController extends AbstractController
             return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
         }
 
+        // Create invite
         $invite = new MatchInvite();
         $invite->setChallenger($challenger);
         $invite->setOpponent($opponent);
@@ -62,24 +81,50 @@ class MatchInviteController extends AbstractController
     public function accept(int $inviteId, EntityManagerInterface $em): Response
     {
         $invite = $em->getRepository(MatchInvite::class)->find($inviteId);
+        $matchRepo = $em->getRepository(TournamentMatch::class);
+        $participantRepo = $em->getRepository(TournamentParticipant::class);
 
+        $challenger = $invite->getChallenger();
+        $opponent = $invite->getOpponent();
+        $tournament = $invite->getTournament();
+
+        // Count alive players
+        $alive = $participantRepo->countAlivePlayers($tournament);
+
+        // Restriction active seulement si plus de 8 joueurs vivants
+        if ($alive > 8) {
+            $wins = $matchRepo->countWinsBetween($challenger, $opponent);
+            if ($wins >= 2) {
+                $this->addFlash(
+                    'danger',
+                    "Vous ne pouvez pas accepter : limite de 2 victoires déjà atteinte (active car plus de 8 joueurs vivants)."
+                );
+                return $this->redirectToRoute('app_tournament_show', [
+                    'id' => $tournament->getId()
+                ]);
+            }
+        }
+
+        // Accept invite
         $invite->setStatus('accepted');
 
-        // Auto-create the match
+        // Create match automatically
         $match = new TournamentMatch();
-        $match->setTournament($invite->getTournament());
-        $match->setPlayer1($invite->getChallenger());
-        $match->setPlayer2($invite->getOpponent());
+        $match->setTournament($tournament);
+        $match->setPlayer1($challenger);
+        $match->setPlayer2($opponent);
         $match->setScore1(3);
         $match->setScore2(3);
         $match->setStartTime(new \DateTimeImmutable());
         $match->setCreatedAt(new \DateTimeImmutable());
-        
+        $match->setStatus('ongoing');
+        $match->setIsValidated(false);
+
         $em->persist($match);
         $em->flush();
 
         return $this->redirectToRoute('app_tournament_match_index', [
-            'tournamentId' => $invite->getTournament()->getId()
+            'tournamentId' => $tournament->getId()
         ]);
     }
 
@@ -88,7 +133,6 @@ class MatchInviteController extends AbstractController
     public function refuse(int $inviteId, EntityManagerInterface $em): Response
     {
         $invite = $em->getRepository(MatchInvite::class)->find($inviteId);
-
         $invite->setStatus('refused');
         $em->flush();
 

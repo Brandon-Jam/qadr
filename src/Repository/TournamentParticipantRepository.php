@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Tournament;
 use App\Entity\TournamentParticipant;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<TournamentParticipant>
@@ -15,6 +16,17 @@ class TournamentParticipantRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, TournamentParticipant::class);
     }
+
+    public function countAlivePlayers(Tournament $tournament): int
+{
+    return (int) $this->createQueryBuilder('p')
+        ->select('COUNT(p.id)')
+        ->where('p.tournament = :t')
+        ->andWhere('p.hp > 0')
+        ->setParameter('t', $tournament)
+        ->getQuery()
+        ->getSingleScalarResult();
+}
 
     //    /**
     //     * @return TournamentParticipant[] Returns an array of TournamentParticipant objects
