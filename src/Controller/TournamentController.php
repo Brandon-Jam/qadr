@@ -13,6 +13,7 @@ use App\Repository\TournamentMatchRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\TournamentParticipantRepository;
+use App\Repository\TournamentParticipantCardRepository;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -206,31 +207,72 @@ public function inventory(
         'cards' => $cards,
     ]);
 }
-    #[Route('/tournament/{id}/profil', name: 'app_tournament_profil')]
-    public function tournamentprofil(
-        Tournament $tournament,
-        TournamentParticipantRepository $participantRepo,
-        TournamentMatchRepository $matchRepo
-    ): Response {
-        $user = $this->getUser();
+   #[Route('/tournament/{id}/profil', name: 'app_tournament_profil')]
+public function profil(
+    Tournament $tournament,
+    TournamentParticipantRepository $participantRepo,
+    TournamentMatchRepository $matchRepo,
+    TournamentParticipantCardRepository $cardUsageRepo,
+    Security $security
+): Response {
+    $user = $security->getUser();
 
-         $participant = $participantRepo->findOneBy([
-        'user' => $user,
-        'tournament' => $tournament,
-    ]);
+    // Stats par défaut
+    $playerStats = [
+        'matchesPlayed' => 0,
+        'wins' => 0,
+        'losses' => 0,
+        'winRate' => 0,
+        'creditsEarned' => 0,
+        'creditsSpent' => 0,
+        'cardsUsed' => 0,
+        'topCard' => null,
+    ];
 
-        if (!$participant) {
-            $this->addFlash('danger', 'Vous ne participez pas à ce tournoi.');
-            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
-        }
+    $participant = null;
+    $matches = [];
 
-        $matches = $matchRepo->findMatchesByUserAndTournament($user, $tournament);
-
-        return $this->render('tournament/profil.html.twig', [
+    if ($user) {
+        // Récupérer la participation du joueur dans ce tournoi
+        $participant = $participantRepo->findOneBy([
             'tournament' => $tournament,
-            'participant' => $participant,
-            'matches' => $matches,
+            'user' => $user
         ]);
+
+        if ($participant) {
+            // --- Matchs du joueur ---
+           $matches = $matchRepo->getMatchesForParticipant($participant);
+            $matchesPlayed = count($matches);
+            $wins = $matchRepo->countWinsByParticipant($participant);
+            $losses = max(0, $matchesPlayed - $wins);
+            $winRate = $matchesPlayed > 0 ? round(($wins / $matchesPlayed) * 100, 1) : 0;
+
+            // --- Crédits ---
+            $creditsEarned = method_exists($participant, 'getCreditsEarned') ? $participant->getCreditsEarned() : 0;
+            $creditsSpent = method_exists($participant, 'getCreditsSpent') ? $participant->getCreditsSpent() : 0;
+
+            // --- Cartes utilisées ---
+            $cardsUsed = $cardUsageRepo->count(['participant' => $participant]);
+
+            // --- Tableau final des stats ---
+            $playerStats = [
+                'matchesPlayed' => $matchesPlayed,
+                'wins' => $wins,
+                'losses' => $losses,
+                'winRate' => $winRate,
+                'creditsEarned' => $creditsEarned,
+                'creditsSpent' => $creditsSpent,
+                'cardsUsed' => $cardsUsed,
+            ];
+        }
     }
+
+    return $this->render('tournament/profil.html.twig', [
+        'tournament' => $tournament,
+        'participant' => $participant,
+        'playerStats' => $playerStats,
+        'matches' => $matches,
+    ]);
+}
 }
 

@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Card;
 use App\Entity\MatchCardPlay;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\TournamentParticipant;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<MatchCardPlay>
@@ -41,7 +43,33 @@ public function getTopCardsByTournament(): array
         ->getQuery()
         ->getResult();
 }
+public function findMostUsedElement(TournamentParticipant $participant): ?string
+{
+    return $this->createQueryBuilder('u')
+        ->select('c.element')
+        ->join('u.card', 'c')
+        ->where('u.participant = :p')
+        ->setParameter('p', $participant)
+        ->groupBy('c.element')
+        ->orderBy('COUNT(u.id)', 'DESC')
+        ->setMaxResults(1)
+       ->getQuery()
+        ->getOneOrNullResult();
+}
 
+public function findMostUsedCard(TournamentParticipant $participant): ?Card
+{
+    return $this->createQueryBuilder('u')
+        ->select('c')
+        ->join('u.card', 'c')
+        ->where('u.participant = :p')
+        ->setParameter('p', $participant)
+        ->groupBy('c.id')
+        ->orderBy('COUNT(u.id)', 'DESC')
+        ->setMaxResults(1)
+        ->getQuery()
+        ->getOneOrNullResult();
+}
     //    /**
     //     * @return MatchCardPlay[] Returns an array of MatchCardPlay objects
     //     */

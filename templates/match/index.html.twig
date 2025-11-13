@@ -25,7 +25,7 @@
                             <div class="avatar neon-avatar-blue">
                                 <img src="{{ asset('img/avatars/' ~ match.player1.avatar|default('default.png')) }}" alt="">
                             </div>
-                            <h3>{{ match.player1.userIdentifier }}</h3>
+                            <h3>{{ match.player1.user.email }}</h3>
                         </div>
 
                         <div class="vs-circle">VS</div>
@@ -34,7 +34,7 @@
                             <div class="avatar neon-avatar-pink">
                                 <img src="{{ asset('img/avatars/' ~ match.player2.avatar|default('default.png')) }}" alt="">
                             </div>
-                            <h3>{{ match.player2.userIdentifier }}</h3>
+                            <h3>{{ match.player2.user.email }}</h3>
                         </div>
 
                         <div class="match-footer">
@@ -67,7 +67,7 @@
                             <div class="avatar neon-avatar-blue">
                                 <img src="{{ asset('img/avatars/' ~ match.player1.avatar|default('default.png')) }}" alt="">
                             </div>
-                            <h3>{{ match.player1.userIdentifier }}</h3>
+                            <h3>{{ match.player1.user.email }}</h3>
                             <p class="score">{{ match.score1 }} HP</p>
                         </div>
 
@@ -77,7 +77,7 @@
                             <div class="avatar neon-avatar-pink">
                                 <img src="{{ asset('img/avatars/' ~ match.player2.avatar|default('default.png')) }}" alt="">
                             </div>
-                            <h3>{{ match.player2.userIdentifier }}</h3>
+                            <h3>{{ match.player2.user.email }}</h3>
                             <p class="score">{{ match.score2 }} HP</p>
                         </div>
 
@@ -110,7 +110,7 @@
                             <div class="avatar {% if winner.id == match.player1.id %}neon-avatar-blue{% else %}avatar-gray{% endif %}">
                                 <img src="{{ asset('img/avatars/' ~ match.player1.avatar|default('default.png')) }}" alt="">
                             </div>
-                            <h3>{{ match.player1.userIdentifier }}</h3>
+                            <h3>{{ match.player1.user.email }}</h3>
                             <p class="score">{{ match.score1 }} HP</p>
                             <p class="result-label">
                                 {% if winner.id == match.player1.id %}🏆 Gagnant{% else %}❌ Perdant{% endif %}
@@ -123,7 +123,7 @@
                             <div class="avatar {% if winner.id == match.player2.id %}neon-avatar-pink{% else %}avatar-gray{% endif %}">
                                 <img src="{{ asset('img/avatars/' ~ match.player2.avatar|default('default.png')) }}" alt="">
                             </div>
-                            <h3>{{ match.player2.userIdentifier }}</h3>
+                            <h3>{{ match.player2.user.email }}</h3>
                             <p class="score">{{ match.score2 }} HP</p>
                             <p class="result-label">
                                 {% if winner.id == match.player2.id %}🏆 Gagnant{% else %}❌ Perdant{% endif %}

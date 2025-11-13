@@ -54,18 +54,32 @@
   {% else %}
     <div class="participants-grid">
       {% for p in tournament.tournamentParticipants %}
-        <div class="player-card">
-          <div class="player-avatar">
+    <div class="player-card">
+        <div class="player-avatar">
             <img src="{{ asset('img/avatars/' ~ p.user.avatar) }}" alt="Avatar joueur">
-          </div>
-          <div class="player-info">
-            <h3>{{ p.user.pseudo|default(p.user.email) }}</h3>
-            {% if app.user and app.user.id == p.user.id %}
-              <span class="tag">Moi</span>
-            {% endif %}
-          </div>
         </div>
-      {% endfor %}
+
+        <div class="player-info">
+            <h3>{{ p.user.pseudo|default(p.user.email) }}</h3>
+
+            {% if app.user and app.user.id == p.user.id %}
+                <span class="tag">Moi</span>
+            {% endif %}
+        </div>
+
+        {# --- BOUTON DÉFIER --- #}
+        {% if app.user and app.user.id != p.user.id %}
+            <a class="btn-challenge"
+               href="{{ path('match_invite_send', {
+                    id: tournament.id,
+                    opponentId: p.id
+               }) }}">
+                ⚔️ Défier
+            </a>
+        {% endif %}
+
+    </div>
+{% endfor %}
     </div>
   {% endif %}
 </section>
@@ -86,6 +100,35 @@
   {% endif %}
   <a href="{{ path('app_tournament_match_index', {tournamentId: tournament.id}) }}" class="btn-matches">🎮 Voir les matchs du tournoi</a>
 </div>
+{% if app.user %}
+    {% set myParticipant = tournament.tournamentParticipants|filter(p => p.user.id == app.user.id)|first %}
+
+    {% if myParticipant %}
+        {% set invites = myParticipant.matchInvitesReceived|filter(i => i.status == 'pending') %}
+
+        {% if invites is not empty %}
+            <div class="invite-box">
+                <h3>⚔️ Défis reçus</h3>
+
+                {% for invite in invites %}
+                    <div class="invite-item">
+                        <p>{{ invite.challenger.user.email }} vous défie !</p>
+
+                        <a class="btn-accept"
+                           href="{{ path('match_invite_accept', {inviteId: invite.id}) }}">
+                            Accepter
+                        </a>
+
+                        <a class="btn-refuse"
+                           href="{{ path('match_invite_refuse', {inviteId: invite.id}) }}">
+                            Refuser
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endif %}
 
 <section class="tournament-cards">
   <h2>🎴 Cartes disponibles</h2>

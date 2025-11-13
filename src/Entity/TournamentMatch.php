@@ -19,7 +19,7 @@ class TournamentMatch
     #[ORM\Column(nullable: true)]
     private ?int $score2 = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?string $round = null;
 
     #[ORM\Column]
@@ -38,11 +38,13 @@ class TournamentMatch
     #[ORM\JoinColumn(nullable: false)]
     private ?Tournament $tournament = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tournamentMatches')]
-    private ?User $player1 = null;
+    #[ORM\ManyToOne(inversedBy: 'matchesAsPlayer1')]
+#[ORM\JoinColumn(nullable: false)]
+private ?TournamentParticipant $player1 = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tournamentMatches')]
-    private ?user $player2 = null;
+#[ORM\ManyToOne(inversedBy: 'matchesAsPlayer2')]
+#[ORM\JoinColumn(nullable: false)]
+private ?TournamentParticipant $player2 = null;
 
     #[ORM\ManyToOne(inversedBy: 'tournamentMatches')]
     private ?User $winner = null;
@@ -137,29 +139,27 @@ class TournamentMatch
         return $this;
     }
 
-    public function getPlayer1(): ?User
-    {
-        return $this->player1;
-    }
+    public function getPlayer1(): ?TournamentParticipant
+{
+    return $this->player1;
+}
 
-    public function setPlayer1(?User $player1): static
-    {
-        $this->player1 = $player1;
+public function setPlayer1(?TournamentParticipant $player1): self
+{
+    $this->player1 = $player1;
+    return $this;
+}
 
-        return $this;
-    }
+    public function getPlayer2(): ?TournamentParticipant
+{
+    return $this->player2;
+}
 
-    public function getPlayer2(): ?user
-    {
-        return $this->player2;
-    }
-
-    public function setPlayer2(?user $player2): static
-    {
-        $this->player2 = $player2;
-
-        return $this;
-    }
+public function setPlayer2(?TournamentParticipant $player2): self
+{
+    $this->player2 = $player2;
+    return $this;
+}
 
     public function getWinner(): ?User
     {

@@ -36,4 +36,56 @@
     <p>Aucun match joué pour le moment.</p>
   {% endif %}
 </section>
+<section class="player-tournament-stats">
+  <h2 class="neon-title">📊 Mes statistiques dans ce tournoi</h2>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <p class="stat-value">{{ playerStats.matchesPlayed|default(0) }}</p>
+      <p class="stat-label">Matchs joués</p>
+    </div>
+
+    <div class="stat-card">
+      <p class="stat-value">{{ playerStats.wins|default(0) }}</p>
+      <p class="stat-label">Victoires</p>
+    </div>
+
+    <div class="stat-card">
+      <p class="stat-value">{{ playerStats.losses|default(0) }}</p>
+      <p class="stat-label">Défaites</p>
+    </div>
+
+    <div class="stat-card">
+      <p class="stat-value">{{ playerStats.winRate|default(0) }}%</p>
+      <p class="stat-label">Taux de victoire</p>
+    </div>
+
+    <div class="stat-card">
+      <p class="stat-value">{{ playerStats.creditsEarned|default(0) }}</p>
+      <p class="stat-label">Crédits gagnés</p>
+    </div>
+
+    <div class="stat-card">
+      <p class="stat-value">{{ playerStats.creditsSpent|default(0) }}</p>
+      <p class="stat-label">Crédits dépensés</p>
+    </div>
+
+    <div class="stat-card">
+      <p class="stat-value">{{ playerStats.cardsUsed|default(0) }}</p>
+      <p class="stat-label">Cartes utilisées</p>
+    </div>
+
+    <div class="stat-card">
+      <p class="stat-value">{{ playerStats.favoriteElement|default('—') }}</p>
+      <p class="stat-label">Élément dominant</p>
+    </div>
+  </div>
+
+  <div class="highlight-card">
+    <p>⭐ <span class="highlight">{{ playerStats.topCard.name|default('Aucune carte favorite') }}</span></p>
+  </div>
+</section>
+
 {% endblock %}
+
+

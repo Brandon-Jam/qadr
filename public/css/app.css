@@ -396,10 +396,12 @@ body {
 
 /* === LISTE TOURNOIS === */
 .tournament-list {
-  background: #0d0d0d;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  justify-items: center;
   padding: 3rem 2rem;
-  color: #fff;
-  min-height: 50vh;
+  background: #0d0d0d;
 }
 
 .tournament-grid {
@@ -415,6 +417,8 @@ body {
   box-shadow: 0 0 15px #ff0044;
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
+  width: 100%;
+  max-width: 320px; /* ✅ évite que ce soit trop large */
 }
 
 .tournament-card:hover {
@@ -1917,4 +1921,116 @@ body {
   color: #666;
   text-shadow: none;
   border-color: #444;
+}
+/* === 🧠 FIX ULTRA PRIORITAIRE : AFFICHAGE GRILLE TOURNOIS === */
+section.tournament-list > .tournament-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 2rem !important;
+  justify-items: center !important;
+  align-items: start !important;
+  width: 100% !important;
+}
+
+.tournament-card {
+  display: flex !important;
+  flex-direction: column !important;
+  background: rgba(20, 20, 20, 0.9);
+  border: 2px solid #ff0044;
+  border-radius: 12px;
+  box-shadow: 0 0 15px #ff0044;
+  width: 100%;
+  max-width: 320px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tournament-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 30px #ff0044, 0 0 60px #ff0044;
+}
+
+.tournament-img img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 2px solid #ff0044;
+}
+.player-tournament-stats {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #fff;
+  background: radial-gradient(circle at top, #0a0a16 0%, #04040a 100%);
+}
+
+.player-tournament-stats .neon-title {
+  font-family: 'Press Start 2P', cursive;
+  color: #00eaff;
+  text-shadow: 0 0 10px #00eaff;
+  margin-bottom: 2.5rem;
+  font-size: 1rem;
+}
+
+.player-tournament-stats .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+.player-tournament-stats .stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #ff007f;
+  border-radius: 15px;
+  padding: 1.2rem;
+  width: 160px;
+  box-shadow: 0 0 15px #ff007f33;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.player-tournament-stats .stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 25px #ff007f, 0 0 40px #ff007f;
+}
+
+.player-tournament-stats .stat-value {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1rem;
+  color: #fff;
+  text-shadow: 0 0 10px #ff80bf;
+}
+
+.player-tournament-stats .stat-label {
+  color: #ccc;
+  font-size: 0.65rem;
+  margin-top: 0.4rem;
+  text-transform: uppercase;
+}
+
+.highlight-card {
+  margin-top: 2.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #00eaff;
+  border-radius: 12px;
+  display: inline-block;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 0 20px #00eaff33;
+}
+
+.highlight-card .highlight {
+  color: #00eaff;
+  text-shadow: 0 0 8px #00eaff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+}
+.btn-challenge {
+    background: #ff0066;
+    padding: 6px 14px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 0 8px #ff0066;
+    transition: 0.2s;
+}
+.btn-challenge:hover {
+    box-shadow: 0 0 14px #ff2c88;
 }
