@@ -10,7 +10,7 @@
   <div class="profile-header">
     <img src="{{ asset('images/avatars/' ~ (user.avatar ?? 'default.png')) }}" alt="Avatar" class="avatar">
     <div class="profile-info">
-      <h1 class="neon-text">{{ user.pseudo ?? user.email }}</h1>
+      <h1 class="neon-text">{{ user.pseudo }}</h1>
       <p class="profile-rank">Rang : <span class="highlight">Joueur confirmé</span></p>
       <p class="profile-level">Niveau : <span class="highlight">12</span></p>
     </div>

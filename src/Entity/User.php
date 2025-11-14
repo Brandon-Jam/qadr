@@ -38,6 +38,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
 
+    #[ORM\Column(type: 'string', length: 50, unique: true, nullable: true)]
+private ?string $pseudo = null;
+
 
     #[ORM\Column]
     private bool $isVerified = false;
@@ -76,6 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    
 
     /**
      * A visual identifier that represents this user.
@@ -156,6 +160,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getPseudo(): ?string
+{
+    return $this->pseudo;
+}
+
+public function setPseudo(?string $pseudo): self
+{
+    $this->pseudo = $pseudo;
+    return $this;
+}
     /**
      * @return Collection<int, TournamentMatch>
      */

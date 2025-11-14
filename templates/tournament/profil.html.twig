@@ -22,10 +22,10 @@
       {% for match in matches %}
         <li>
           <a href="{{ path('app_tournament_match_show', { tournamentId: tournament.id, id: match.id }) }}">
-            {{ match.player1.user.email }} vs {{ match.player2.user.email }}
+            {{ match.player1.user.pseudo }} vs {{ match.player2.user.pseudo }}
           </a>
           {% if match.winner %}
-            — Gagnant : {{ match.winner.user.email }}
+            — Gagnant : {{ match.winner.user.pseudo }}
           {% else %}
             — En attente
           {% endif %}

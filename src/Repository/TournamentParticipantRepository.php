@@ -27,6 +27,18 @@ class TournamentParticipantRepository extends ServiceEntityRepository
         ->getQuery()
         ->getSingleScalarResult();
 }
+public function getRankingByWins($tournamentId): array
+{
+    return $this->createQueryBuilder('p')
+        ->leftJoin('p.tournamentMatchesWon', 'm')
+        ->addSelect('COUNT(m.id) AS wins') // ⬅️ CORRECTION ICI
+        ->where('p.tournament = :tournamentId')
+        ->setParameter('tournamentId', $tournamentId)
+        ->groupBy('p.id')
+        ->orderBy('wins', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
 
     //    /**
     //     * @return TournamentParticipant[] Returns an array of TournamentParticipant objects

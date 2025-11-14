@@ -63,7 +63,7 @@
 </div>
         <div class="player-info">
            <h3>
-              {{ p.user.pseudo|default(p.user.email) }}
+              {{ p.user.pseudo }}
               {% if p.isEliminated %}
                 <span class="out-tag">(Éliminé)</span>
               {% endif %}
@@ -138,6 +138,44 @@
         {% endif %}
     {% endif %}
 {% endif %}
+
+<section class="tournament-ranking">
+    <h2>🏆 Classement du tournoi</h2>
+
+    {% if ranking is empty %}
+        <p>Aucun match joué pour le moment.</p>
+    {% else %}
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Joueur</th>
+                    <th>Victoires</th>
+                    <th><span class="heart full">❤️</span></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% set pos = 1 %}
+                {% for row in ranking %}
+                    {% set participant = row[0] %}
+                    {% set wins = row['wins'] %}
+
+                    <tr>
+                        <td>{{ pos }}</td>
+                        <td>{{ participant.user.pseudo }}</td>
+                        <td>{{ wins }}</td>
+                        <td>{{ participant.hp }}</td>
+                    </tr>
+
+                    
+
+                    {% set pos = pos + 1 %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</section>
 
 <section class="tournament-cards">
   <h2>🎴 Cartes disponibles</h2>

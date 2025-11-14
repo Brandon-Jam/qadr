@@ -51,13 +51,24 @@ public function index(
 
 
 
-
 #[Route('/tournament/{id}', name: 'app_tournament_show')]
-public function show(Tournament $tournament): Response
-{
+public function show(
+    int $id,
+    TournamentRepository $tournamentRepo,
+    TournamentParticipantRepository $participantRepo
+): Response {
+    $tournament = $tournamentRepo->find($id);
+
+    if (!$tournament) {
+        throw $this->createNotFoundException("Tournoi introuvable");
+    }
+
+    // ⬇️ Récupération du classement juste ici
+    $ranking = $participantRepo->getRankingByWins($id);
 
     return $this->render('tournament/show.html.twig', [
         'tournament' => $tournament,
+        'ranking' => $ranking
     ]);
 }
 

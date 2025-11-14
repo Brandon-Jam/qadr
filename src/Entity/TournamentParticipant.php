@@ -57,6 +57,9 @@ class TournamentParticipant
     #[ORM\Column(type: 'integer')]
     private int $creditsEarned = 0;
 
+    #[ORM\OneToMany(mappedBy: 'winner', targetEntity: TournamentMatch::class)]
+private Collection $tournamentMatchesWon;
+
     #[ORM\Column(type: 'integer')]
     private int $creditsSpent = 0;
 
@@ -66,6 +69,7 @@ class TournamentParticipant
         $this->cards = new ArrayCollection();
         $this->matchInvitesSent = new ArrayCollection();
         $this->matchInvitesReceived = new ArrayCollection();
+        $this->tournamentMatchesWon = new ArrayCollection();
     }
 
     // -----------------------------------
@@ -120,6 +124,10 @@ class TournamentParticipant
         $this->tournament = $tournament;
         return $this;
     }
+    public function getTournamentMatchesWon(): Collection
+{
+    return $this->tournamentMatchesWon;
+}
 
     // -----------------------------------
     // CREDITS SYSTEM
