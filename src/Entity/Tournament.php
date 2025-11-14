@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\TournamentRepository;
-use App\Repository\Partipants;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

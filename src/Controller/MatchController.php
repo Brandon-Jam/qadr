@@ -6,6 +6,7 @@ use App\Entity\Card;
 use App\Service\CardEngine;
 use App\Entity\MatchCardPlay;
 use App\Entity\TournamentMatch;
+use App\Entity\TournamentParticipant;
 use App\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\TournamentParticipantCard;
