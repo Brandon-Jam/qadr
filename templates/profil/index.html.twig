@@ -8,7 +8,9 @@
 
   {# 🔹 1️⃣ Identité du joueur #}
   <div class="profile-header">
-    <img src="{{ asset('images/avatars/' ~ (user.avatar ?? 'default.png')) }}" alt="Avatar" class="avatar">
+  <div class="player-avatar">
+   <img src="{{ asset('img/avatars/' ~ user.avatar) }}" alt="Avatar joueur">
+   </div>
     <div class="profile-info">
       <h1 class="neon-text">{{ user.pseudo }}</h1>
       <p class="profile-rank">Rang : <span class="highlight">Joueur confirmé</span></p>

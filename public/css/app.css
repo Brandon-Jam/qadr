@@ -2065,7 +2065,7 @@ section.tournament-list > .tournament-grid {
 }
 
 .ranking-table {
-    width: 100%;
+    width: 80%;
     border-collapse: collapse;
     background: #0d0d0d;
     color: #fff;
@@ -2074,11 +2074,12 @@ section.tournament-list > .tournament-grid {
 }
 
 .ranking-table th {
-    background: #ff006a;
+    
     padding: 10px;
 }
 
 .ranking-table td {
     padding: 10px;
     border-bottom: 1px solid #333;
+    text-align: center;
 }
