@@ -2,58 +2,189 @@
 
 {% block body %}
 <section class="match-view">
+
     <h1 class="match-title"> 
         <span>{{ match.player1.user.email }}</span> vs <span>{{ match.player2.user.email }}</span>
     </h1>
 
+    <p class="phase-indicator">
+        Phase actuelle : <strong>{{ match.phase|capitalize }}</strong>
+    </p>
+
+    {# ------------------------------------------------------------- #
+       🔥 SCORE / HP
+    # ------------------------------------------------------------- #}
     <div class="hp-container">
         <div class="player">
             <h3>{{ match.player1.user.email }}</h3>
             <div class="hearts">
-    {% for i in 1..3 %}
-        {% if i <= match.score1 %}
-            <span class="heart full">❤️</span>
-        {% else %}
-            <span class="heart empty">🤍</span>
-        {% endif %}
-    {% endfor %}
-</div>
-            
+                {% for i in 1..3 %}
+                    {% if i <= match.score1 %}
+                        <span class="heart full">❤️</span>
+                    {% else %}
+                        <span class="heart empty">🤍</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
 
         <div class="player">
-            <h3>{{ match.player2.user.Email }}</h3>
+            <h3>{{ match.player2.user.email }}</h3>
             <div class="hp-bar">
-                <div class="hp-fill" style="width: {{ match.score2 is not null ? match.score2 : 0 }}%;"></div>
+                <div class="hp-fill" style="width: {{ match.score2 ?? 0 }}%;"></div>
             </div>
-            <p class="hp-text">
-                {% if match.score2 is not null %}
-                    {{ match.score2 }} HP
-                {% else %}
-                    HP non défini
-                {% endif %}
-            </p>
+            <p class="hp-text">{{ match.score2 ?? 'HP non défini' }}</p>
         </div>
     </div>
 
-    {# --- Affichage du score + statut du match --- #}
-    {% if match.score1 is not null and match.score2 is not null %}
-        <div class="match-score neon-text">
-            <p>Score : {{ match.score1 }} - {{ match.score2 }}</p>
-            {% if match.winner %}
-                <p>🏆 Vainqueur : {{ match.winner.user.email }}</p>
+
+    {# ------------------------------------------------------------- #
+       🔥🔥🔥 PHASE : CARTES
+    # ------------------------------------------------------------- #}
+    {% if match.phase == 'cards' %}
+
+        <h2 class="section-title">🎴 Phase des cartes</h2>
+
+        {# ----- STATUT READY ----- #}
+        {% set isP1 = (match.player1.user.id == app.user.id) %}
+        {% set readySelf = isP1 ? match.player1Ready : match.player2Ready %}
+        {% set readyOpp  = isP1 ? match.player2Ready : match.player1Ready %}
+
+        <div class="ready-status">
+            <p>👤 Vous : {{ readySelf ? "✅ Prêt" : "⏳ Pas prêt" }}</p>
+            <p>👤 Adversaire : {{ readyOpp ? "✅ Prêt" : "⏳ Pas prêt" }}</p>
+        </div>
+
+        {# ----- TES CARTES UTILISÉES ----- #}
+        <div class="cards-phase">
+            <div class="my-cards">
+                <h3>Vos cartes utilisées : {{ myCards|length }}</h3>
+
+                {% if myCards is not empty %}
+                    <ul>
+                        {% for c in myCards %}
+                            <li>{{ c.card.name }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Aucune carte utilisée pour l'instant.</p>
+                {% endif %}
+            </div>
+
+            {# ----- CARTES ADVERSAIRES : juste le nombre ----- #}
+            <div class="opp-cards">
+                <h3>Cartes adverses jouées : {{ oppCardsCount }}</h3>
+                <p><em>(Les cartes seront révélées seulement après validation de la phase.)</em></p>
+            </div>
+        </div>
+
+
+        {# ----- VOS CARTES DISPONIBLES ----- #}
+        <h3 class="section-title">🧩 Vos cartes disponibles</h3>
+
+        <div class="available-cards">
+            {% if availableCards is empty %}
+                <p>Aucune carte disponible.</p>
             {% else %}
-                <p>⚔️ Match en attente de résultat</p>
+                {% for pc in availableCards %}
+                    <form method="POST"
+                          action="{{ path('app_tournament_match_use_card', {
+                              tournamentId: tournament.id,
+                              id: match.id,
+                              cardId: pc.card.id
+                          }) }}"
+                          style="display:inline-block">
+
+                        <button class="btn btn-neon small-card-btn">
+                            {{ pc.card.name }} (x{{ pc.quantity }})
+                        </button>
+                    </form>
+                {% endfor %}
             {% endif %}
         </div>
-    {% else %}
-        <p class="match-score neon-text">⚔️ Match en attente de résultat</p>
+
+
+        {# ----- READY / CANCEL READY ----- #}
+        <div class="ready-zone">
+            {% if not readySelf %}
+                <form method="POST" action="{{ path('app_tournament_match_set_ready', {
+                    tournamentId: tournament.id,
+                    id: match.id
+                }) }}">
+                    <button class="btn btn-success neon-btn">J'ai fini mes cartes</button>
+                </form>
+            {% else %}
+                <form method="POST" action="{{ path('app_tournament_match_cancel_ready', {
+                    tournamentId: tournament.id,
+                    id: match.id
+                }) }}">
+                    <button class="btn-red">❌ Annuler prêt</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <p class="info-text">La phase passera automatiquement en « battle » lorsque les deux joueurs seront prêts.</p>
+
     {% endif %}
 
-    {# --- Formulaire pour le referee : saisie des scores --- #}
+
+
+    {# ------------------------------------------------------------- #
+       🔥🔥🔥 PHASE : BATTLE (Révélation des cartes)
+    # ------------------------------------------------------------- #}
+    {% if match.phase == 'battle' %}
+
+        <h2 class="section-title">🪄 Cartes révélées</h2>
+
+        {% if usedCards is empty %}
+            <p>Aucune carte n’a été utilisée.</p>
+        {% else %}
+            <ul class="used-card-list">
+                {% for c in usedCards %}
+                    <li>
+                        <strong>{{ c.usedBy.email }}</strong> → {{ c.card.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>Le match peut maintenant être joué. L'arbitre saisira ensuite les scores.</p>
+
+    {% endif %}
+
+
+
+    {# ------------------------------------------------------------- #
+       🔥🔥🔥 PHASE : VALIDATED
+    # ------------------------------------------------------------- #}
+    {% if match.phase == 'validated' %}
+
+        <h2 class="section-title">🏁 Match validé</h2>
+
+        <p>Vainqueur : <strong>{{ match.winner.user.email }}</strong></p>
+
+        <h3>Cartes utilisées :</h3>
+        <ul>
+            {% for c in usedCards %}
+                <li><strong>{{ c.usedBy.email }}</strong> → {{ c.card.name }}</li>
+            {% endfor %}
+        </ul>
+
+    {% endif %}
+
+
+
+    {# ------------------------------------------------------------- #
+       🔥🔥🔥 BOUTON VALIDATION ARBITRE (UNIQUEMENT EN BATTLE)
+    # ------------------------------------------------------------- #}
+    {% if match.phase == 'battle' 
+        and (is_granted('ROLE_REFEREE') or match.tournament.referees.contains(app.user))
+        and not match.isValidated %}
+         {# --- Formulaire pour le referee : saisie des scores --- #}
     {% if is_granted('ROLE_REFEREE') or match.tournament.referees.contains(app.user) %}
         <form method="post" class="score-form">
             <input type="hidden" name="action" value="score">
+
             <div class="score-inputs">
                 <label>{{ match.player1.user.email }} :</label>
                 <input type="number" name="score1" min="0" value="{{ match.score1 ?? '' }}">
@@ -66,21 +197,15 @@
         </form>
     {% endif %}
 
-    <h2 class="section-title">🎴 Vos cartes disponibles</h2>
-
-    
-
-    <h2 class="section-title">🪄 Cartes utilisées pendant le match</h2>
-
-    
-    {# --- Validation finale du match (referee only) --- #}
-    {% if (is_granted('ROLE_REFEREE') or match.tournament.referees.contains(app.user)) and not match.isValidated %}
         <form method="post" class="validate-form">
             <input type="hidden" name="action" value="validate">
             <button type="submit" class="btn btn-neon">✅ Valider le match</button>
         </form>
     {% endif %}
 
-    <a href="{{ path('app_tournament_show', {id: tournament.id}) }}" class="btn-back">← Retour au tournoi</a>
+
+    <a href="{{ path('app_tournament_show', { id: tournament.id }) }}" class="btn-back">← Retour au tournoi</a>
+
 </section>
 {% endblock %}
+

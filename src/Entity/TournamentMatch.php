@@ -26,8 +26,14 @@ class TournamentMatch
     #[ORM\Column]
     private ?\DateTimeImmutable $startTime = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $status = null;
+   #[ORM\Column(length: 20)]
+private string $phase = 'cards'; // 'cards', 'battle', 'validated'
+
+#[ORM\Column(type: 'boolean')]
+private bool $player1Ready = false;
+
+#[ORM\Column(type: 'boolean')]
+private bool $player2Ready = false;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -109,17 +115,7 @@ class TournamentMatch
         return $this;
     }
 
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(?string $status): self
-    {
-        $this->status = $status;
-
-        return $this;
-    }
+   
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -216,4 +212,37 @@ class TournamentMatch
 
         return $this;
     }
+
+    public function getPhase(): string
+{
+    return $this->phase;
+}
+
+public function setPhase(string $phase): self
+{
+    $this->phase = $phase;
+    return $this;
+}
+
+public function isPlayer1Ready(): bool
+{
+    return $this->player1Ready;
+}
+
+public function setPlayer1Ready(bool $ready): self
+{
+    $this->player1Ready = $ready;
+    return $this;
+}
+
+public function isPlayer2Ready(): bool
+{
+    return $this->player2Ready;
+}
+
+public function setPlayer2Ready(bool $ready): self
+{
+    $this->player2Ready = $ready;
+    return $this;
+}
 }

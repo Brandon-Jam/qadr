@@ -156,6 +156,10 @@ public function buyCard(
         return $this->redirectToRoute('app_tournament_shop', ['id' => $tournament->getId()]);
     }
 
+    // 🔥 Ajouter au crédit dépensé total
+$participant->setCreditsSpent(
+    $participant->getCreditsSpent() + $card->getCost()
+);
     // Vérifie si le joueur a déjà cette carte pour ce tournoi
     $tpc = $em->getRepository(TournamentParticipantCard::class)
         ->findOneBy(['participant' => $participant, 'card' => $card]);
