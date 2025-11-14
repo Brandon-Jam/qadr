@@ -92,6 +92,8 @@ public function registerToTournament(
     $participant->setUser($user);
     $participant->setTournament($tournament);
     $participant->setJoinedAt(new \DateTimeImmutable());
+    $participant->setHp(10);              // HP de départ
+    $participant->setIsEliminated(false);
     $participant->setConfirmed(true);
     $em->persist($participant);
     $em->flush();

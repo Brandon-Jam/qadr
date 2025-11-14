@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\TournamentMatchRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\TournamentParticipant;
+use App\Repository\TournamentMatchRepository;
 
 #[ORM\Entity(repositoryClass: TournamentMatchRepository::class)]
 class TournamentMatch
@@ -20,7 +21,7 @@ class TournamentMatch
     private ?int $score2 = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?string $round = null;
+    private ?int $round = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $startTime = null;
@@ -34,21 +35,26 @@ class TournamentMatch
     #[ORM\Column(type: 'boolean')]
     private bool $isValidated = false;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isFinished = false;
+
     #[ORM\ManyToOne(inversedBy: 'tournamentMatches')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Tournament $tournament = null;
 
     #[ORM\ManyToOne(inversedBy: 'matchesAsPlayer1')]
-#[ORM\JoinColumn(nullable: false)]
-private ?TournamentParticipant $player1 = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private ?TournamentParticipant $player1 = null;
 
-#[ORM\ManyToOne(inversedBy: 'matchesAsPlayer2')]
-#[ORM\JoinColumn(nullable: false)]
-private ?TournamentParticipant $player2 = null;
+    #[ORM\ManyToOne(inversedBy: 'matchesAsPlayer2')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?TournamentParticipant $player2 = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tournamentMatches')]
-    private ?User $winner = null;
+    #[ORM\ManyToOne(targetEntity: TournamentParticipant::class)]
+    private ?TournamentParticipant $winner = null;
 
+    #[ORM\ManyToOne(targetEntity: TournamentParticipant::class)]
+    private ?TournamentParticipant $loser = null;
 
     public function getId(): ?int
     {
@@ -60,7 +66,7 @@ private ?TournamentParticipant $player2 = null;
         return $this->score1;
     }
 
-    public function setScore1(?int $score1): static
+    public function setScore1(?int $score1): self
     {
         $this->score1 = $score1;
 
@@ -72,19 +78,19 @@ private ?TournamentParticipant $player2 = null;
         return $this->score2;
     }
 
-    public function setScore2(?int $score2): static
+    public function setScore2(?int $score2): self
     {
         $this->score2 = $score2;
 
         return $this;
     }
 
-    public function getRound(): ?string
+    public function getRound(): ?int
     {
         return $this->round;
     }
 
-    public function setRound(string $round): static
+    public function setRound(?int $round): self
     {
         $this->round = $round;
 
@@ -96,7 +102,7 @@ private ?TournamentParticipant $player2 = null;
         return $this->startTime;
     }
 
-    public function setStartTime(\DateTimeImmutable $startTime): static
+    public function setStartTime(\DateTimeImmutable $startTime): self
     {
         $this->startTime = $startTime;
 
@@ -108,7 +114,7 @@ private ?TournamentParticipant $player2 = null;
         return $this->status;
     }
 
-    public function setStatus(?string $status): static
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
 
@@ -120,9 +126,33 @@ private ?TournamentParticipant $player2 = null;
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isValidated(): bool
+    {
+        return $this->isValidated;
+    }
+
+    public function setIsValidated(bool $isValidated): self
+    {
+        $this->isValidated = $isValidated;
+
+        return $this;
+    }
+
+    public function isFinished(): bool
+    {
+        return $this->isFinished;
+    }
+
+    public function setIsFinished(bool $isFinished): self
+    {
+        $this->isFinished = $isFinished;
 
         return $this;
     }
@@ -132,7 +162,7 @@ private ?TournamentParticipant $player2 = null;
         return $this->tournament;
     }
 
-    public function setTournament(?Tournament $tournament): static
+    public function setTournament(?Tournament $tournament): self
     {
         $this->tournament = $tournament;
 
@@ -140,49 +170,50 @@ private ?TournamentParticipant $player2 = null;
     }
 
     public function getPlayer1(): ?TournamentParticipant
-{
-    return $this->player1;
-}
+    {
+        return $this->player1;
+    }
 
-public function setPlayer1(?TournamentParticipant $player1): self
-{
-    $this->player1 = $player1;
-    return $this;
-}
+    public function setPlayer1(?TournamentParticipant $player1): self
+    {
+        $this->player1 = $player1;
+
+        return $this;
+    }
 
     public function getPlayer2(): ?TournamentParticipant
-{
-    return $this->player2;
-}
+    {
+        return $this->player2;
+    }
 
-public function setPlayer2(?TournamentParticipant $player2): self
-{
-    $this->player2 = $player2;
-    return $this;
-}
+    public function setPlayer2(?TournamentParticipant $player2): self
+    {
+        $this->player2 = $player2;
 
-    public function getWinner(): ?User
+        return $this;
+    }
+
+    public function getWinner(): ?TournamentParticipant
     {
         return $this->winner;
     }
 
-    public function setWinner(?User $winner): static
+    public function setWinner(?TournamentParticipant $winner): self
     {
         $this->winner = $winner;
 
         return $this;
     }
 
-    public function isValidated(): bool
-{
-    return $this->isValidated;
-}
+    public function getLoser(): ?TournamentParticipant
+    {
+        return $this->loser;
+    }
 
-public function setIsValidated(bool $isValidated): self
-{
-    $this->isValidated = $isValidated;
+    public function setLoser(?TournamentParticipant $loser): self
+    {
+        $this->loser = $loser;
 
-    return $this;
-}
-
+        return $this;
+    }
 }

@@ -32,6 +32,21 @@ class Card
 
     #[ORM\Column(length: 20)]
     private ?string $element = null;
+
+    #[ORM\Column(length: 50)]
+private string $type; // attack, defense, heal, special
+
+#[ORM\Column(length: 50)]
+private string $trigger; // on_use, on_win, on_lose, after_match
+
+#[ORM\Column(length: 50)]
+private string $stat; // hp, damage, shield
+
+#[ORM\Column(length: 5)]
+private string $operator; // + or -
+
+#[ORM\Column(type: 'integer')]
+private int $value; // numeric effect
     
 
     /**
@@ -127,6 +142,62 @@ class Card
         $this->element = $element;
      return $this;
     }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getTrigger(): string
+    {
+        return $this->trigger;
+    }
+
+    public function setTrigger(string $trigger): self
+    {
+        $this->trigger = $trigger;
+        return $this;
+    }
+
+    public function getStat(): string
+    {
+        return $this->stat;
+    }
+
+    public function setStat(string $stat): self
+    {
+        $this->stat = $stat;
+        return $this;
+    }
+
+    public function getOperator(): string
+    {
+        return $this->operator;
+    }
+
+    public function setOperator(string $operator): self
+    {
+        $this->operator = $operator;
+        return $this;
+    }
+
+    public function getValue(): int
+    {
+        return $this->value;
+    }
+
+    public function setValue(int $value): self
+    {
+        $this->value = $value;
+        return $this;
+    }
+
 
     /**
      * @return Collection<int, TournamentCard>

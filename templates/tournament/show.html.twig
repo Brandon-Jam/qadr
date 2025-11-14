@@ -54,13 +54,20 @@
   {% else %}
     <div class="participants-grid">
       {% for p in tournament.tournamentParticipants %}
-    <div class="player-card">
+    <div class="player-card {% if p.isEliminated %}player-eliminated{% endif %}">
         <div class="player-avatar">
             <img src="{{ asset('img/avatars/' ~ p.user.avatar) }}" alt="Avatar joueur">
         </div>
-
+  <div class="player-hp">
+  ❤️ x{{ p.hp }}
+</div>
         <div class="player-info">
-            <h3>{{ p.user.pseudo|default(p.user.email) }}</h3>
+           <h3>
+              {{ p.user.pseudo|default(p.user.email) }}
+              {% if p.isEliminated %}
+                <span class="out-tag">(Éliminé)</span>
+              {% endif %}
+            </h3>
 
             {% if app.user and app.user.id == p.user.id %}
                 <span class="tag">Moi</span>
@@ -68,7 +75,7 @@
         </div>
 
         {# --- BOUTON DÉFIER --- #}
-        {% if app.user and app.user.id != p.user.id %}
+        {% if not p.isEliminated and app.user and app.user.id != p.user.id %}
             <a class="btn-challenge"
                href="{{ path('match_invite_send', {
                     id: tournament.id,
@@ -76,6 +83,8 @@
                }) }}">
                 ⚔️ Défier
             </a>
+        {% elseif p.isEliminated %}
+            <span class="eliminated-badge">☠️ Eliminé</span>
         {% endif %}
 
     </div>

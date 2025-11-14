@@ -34,6 +34,9 @@ class TournamentParticipant
     #[ORM\Column(type: 'integer')]
     private int $hp = 10;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isEliminated = false;
+
     // ----- MATCH INVITES -----
     #[ORM\OneToMany(mappedBy: 'challenger', targetEntity: MatchInvite::class, cascade: ['remove'])]
     private Collection $matchInvitesSent;
@@ -166,6 +169,17 @@ public function setHp(int $hp): self
     return $this;
 }
 
+public function isEliminated(): bool
+{
+    return $this->isEliminated;
+}
+
+public function setIsEliminated(bool $isEliminated): self
+{
+    $this->isEliminated = $isEliminated;
+
+    return $this;
+}
     // -----------------------------------
     // CARDS
     // -----------------------------------
@@ -260,6 +274,15 @@ public function setHp(int $hp): self
                 $invite->setOpponent(null);
             }
         }
+        return $this;
+    }
+
+    public function checkElimination(): self
+    {
+        if ($this->hp <= 0) {
+            $this->isEliminated = true;
+        }
+
         return $this;
     }
 }

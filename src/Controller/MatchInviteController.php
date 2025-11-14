@@ -21,25 +21,77 @@ class MatchInviteController extends AbstractController
     ): Response {
         $user = $this->getUser();
 
-        $challenger = $em->getRepository(TournamentParticipant::class)->findOneBy([
-            'user' => $user,
-            'tournament' => $tournament
-        ]);
-
-        $opponent = $em->getRepository(TournamentParticipant::class)->find($opponentId);
-
-        // Prevent self-challenge
-        if ($challenger->getId() === $opponent->getId()) {
-            throw $this->createAccessDeniedException("Vous ne pouvez pas vous défier vous-même.");
+        if (!$user) {
+            $this->addFlash('danger', 'Vous devez être connecté pour envoyer un défi.');
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
         }
 
-        $matchRepo = $em->getRepository(TournamentMatch::class);
         $participantRepo = $em->getRepository(TournamentParticipant::class);
+        $matchRepo       = $em->getRepository(TournamentMatch::class);
+        $inviteRepo      = $em->getRepository(MatchInvite::class);
 
-        // Count alive players (HP > 0)
+        // Joueur qui envoie le défi
+        $challenger = $participantRepo->findOneBy([
+            'user' => $user,
+            'tournament' => $tournament,
+        ]);
+
+        if (!$challenger) {
+            $this->addFlash('danger', "Vous n'êtes pas inscrit à ce tournoi.");
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+        }
+
+        // Joueur défié
+        $opponent = $participantRepo->find($opponentId);
+
+        if (!$opponent || $opponent->getTournament()->getId() !== $tournament->getId()) {
+            $this->addFlash('danger', "Joueur introuvable dans ce tournoi.");
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+        }
+
+        // 🔴 Pas d’auto-défi
+        if ($challenger->getId() === $opponent->getId()) {
+            $this->addFlash('danger', "Vous ne pouvez pas vous défier vous-même.");
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+        }
+
+        // 🔴 Pas de défi si l’un est éliminé
+        if ($opponent->isEliminated() || $challenger->isEliminated()) {
+            $this->addFlash('danger', 'Un joueur éliminé ne peut pas participer à un match.');
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+        }
+
+        // 🔴 Pas de défi si l'un des deux a déjà un match en cours
+        $activeChallengerMatch = $matchRepo->findActiveMatchForParticipant($challenger);
+        $activeOpponentMatch   = $matchRepo->findActiveMatchForParticipant($opponent);
+
+        if ($activeChallengerMatch) {
+            $this->addFlash('danger', "Vous avez déjà un match en cours. Terminez-le avant d'envoyer un défi.");
+            return $this->redirectToRoute('app_tournament_match_show', [
+                'tournamentId' => $tournament->getId(),
+                'id' => $activeChallengerMatch->getId(),
+            ]);
+        }
+
+        if ($activeOpponentMatch) {
+            $this->addFlash('danger', "Ce joueur a déjà un match en cours. Impossible de le défier pour le moment.");
+            return $this->redirectToRoute('app_tournament_show', [
+                'id' => $tournament->getId(),
+            ]);
+        }
+
+        // 🚫 Pas de défi si un match NON TERMINÉ existe déjà entre eux
+        $ongoingMatch = $matchRepo->getOngoingMatchBetween($challenger, $opponent);
+
+        if ($ongoingMatch) {
+            $this->addFlash('danger', "Vous êtes déjà dans un match en cours contre ce joueur.");
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+        }
+
+        // Nombre de joueurs encore en vie (HP > 0)
         $alive = $participantRepo->countAlivePlayers($tournament);
 
-        // Restriction active seulement si plus de 8 joueurs vivants
+        // Limite de 2 victoires si plus de 8 joueurs vivants
         if ($alive > 8) {
             $wins = $matchRepo->countWinsBetween($challenger, $opponent);
             if ($wins >= 2) {
@@ -51,11 +103,12 @@ class MatchInviteController extends AbstractController
             }
         }
 
-        // Existing pending invite
-        $existing = $em->getRepository(MatchInvite::class)->findOneBy([
+        // Vérifier qu'une invitation n'existe pas déjà
+        $existing = $inviteRepo->findOneBy([
             'challenger' => $challenger,
-            'opponent' => $opponent,
-            'status' => 'pending'
+            'opponent'   => $opponent,
+            'tournament' => $tournament,
+            'status'     => 'pending',
         ]);
 
         if ($existing) {
@@ -63,11 +116,12 @@ class MatchInviteController extends AbstractController
             return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
         }
 
-        // Create invite
+        // Création de l'invitation
         $invite = new MatchInvite();
         $invite->setChallenger($challenger);
         $invite->setOpponent($opponent);
         $invite->setTournament($tournament);
+        $invite->setStatus('pending');
 
         $em->persist($invite);
         $em->flush();
@@ -80,13 +134,46 @@ class MatchInviteController extends AbstractController
     #[Route('/tournament/invite/{inviteId}/accept', name: 'match_invite_accept')]
     public function accept(int $inviteId, EntityManagerInterface $em): Response
     {
-        $invite = $em->getRepository(MatchInvite::class)->find($inviteId);
-        $matchRepo = $em->getRepository(TournamentMatch::class);
+        $inviteRepo      = $em->getRepository(MatchInvite::class);
+        $matchRepo       = $em->getRepository(TournamentMatch::class);
         $participantRepo = $em->getRepository(TournamentParticipant::class);
 
+        $invite = $inviteRepo->find($inviteId);
+
+        if (!$invite) {
+            throw $this->createNotFoundException('Invitation introuvable.');
+        }
+
         $challenger = $invite->getChallenger();
-        $opponent = $invite->getOpponent();
+        $opponent   = $invite->getOpponent();
         $tournament = $invite->getTournament();
+
+        // 🔒 Empêcher un joueur déjà engagé d’en accepter un autre
+        $activeChallengerMatch = $matchRepo->findActiveMatchForParticipant($challenger);
+        $activeOpponentMatch   = $matchRepo->findActiveMatchForParticipant($opponent);
+
+        if ($activeChallengerMatch) {
+            $this->addFlash('danger', "❌ Vous avez déjà un match en cours. Terminez-le avant d'en accepter un autre.");
+            return $this->redirectToRoute('app_tournament_match_show', [
+                'tournamentId' => $tournament->getId(),
+                'id' => $activeChallengerMatch->getId(),
+            ]);
+        }
+
+        if ($activeOpponentMatch) {
+            $this->addFlash('danger', "❌ L'adversaire a déjà un match en cours. Impossible de lancer un second match.");
+            return $this->redirectToRoute('app_tournament_show', [
+                'id' => $tournament->getId(),
+            ]);
+        }
+
+        // 🚨 Empêcher un match si un joueur est éliminé
+        if ($challenger->isEliminated() || $opponent->isEliminated()) {
+            $this->addFlash('danger', 'Un joueur éliminé ne peut plus participer à un match.');
+            return $this->redirectToRoute('app_tournament_show', [
+                'id' => $tournament->getId()
+            ]);
+        }
 
         // Count alive players
         $alive = $participantRepo->countAlivePlayers($tournament);
@@ -105,26 +192,27 @@ class MatchInviteController extends AbstractController
             }
         }
 
-        // Accept invite
+        // Accepter l'invitation
         $invite->setStatus('accepted');
 
-        // Create match automatically
+        // Création du match
         $match = new TournamentMatch();
         $match->setTournament($tournament);
         $match->setPlayer1($challenger);
         $match->setPlayer2($opponent);
-        $match->setScore1(3);
+        $match->setScore1(3); 
         $match->setScore2(3);
         $match->setStartTime(new \DateTimeImmutable());
         $match->setCreatedAt(new \DateTimeImmutable());
-        $match->setStatus('ongoing');
         $match->setIsValidated(false);
+        $match->setIsFinished(false);
 
         $em->persist($match);
         $em->flush();
 
-        return $this->redirectToRoute('app_tournament_match_index', [
-            'tournamentId' => $tournament->getId()
+        return $this->redirectToRoute('app_tournament_match_show', [
+            'tournamentId' => $tournament->getId(),
+            'id' => $match->getId()
         ]);
     }
 
@@ -133,6 +221,11 @@ class MatchInviteController extends AbstractController
     public function refuse(int $inviteId, EntityManagerInterface $em): Response
     {
         $invite = $em->getRepository(MatchInvite::class)->find($inviteId);
+
+        if (!$invite) {
+            throw $this->createNotFoundException('Invitation introuvable.');
+        }
+
         $invite->setStatus('refused');
         $em->flush();
 

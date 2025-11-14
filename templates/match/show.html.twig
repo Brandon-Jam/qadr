@@ -41,7 +41,7 @@
         <div class="match-score neon-text">
             <p>Score : {{ match.score1 }} - {{ match.score2 }}</p>
             {% if match.winner %}
-                <p>🏆 Vainqueur : {{ match.winner.userIdentifier }}</p>
+                <p>🏆 Vainqueur : {{ match.winner.user.email }}</p>
             {% else %}
                 <p>⚔️ Match en attente de résultat</p>
             {% endif %}
@@ -55,10 +55,10 @@
         <form method="post" class="score-form">
             <input type="hidden" name="action" value="score">
             <div class="score-inputs">
-                <label>{{ match.player1.userIdentifier }} :</label>
+                <label>{{ match.player1.user.email }} :</label>
                 <input type="number" name="score1" min="0" value="{{ match.score1 ?? '' }}">
 
-                <label>{{ match.player2.userIdentifier }} :</label>
+                <label>{{ match.player2.user.email }} :</label>
                 <input type="number" name="score2" min="0" value="{{ match.score2 ?? '' }}">
 
                 <button type="submit" class="btn btn-neon">💾 Enregistrer les scores</button>
@@ -68,55 +68,11 @@
 
     <h2 class="section-title">🎴 Vos cartes disponibles</h2>
 
-    <div class="cards-grid">
-        {% if availableCards is not empty %}
-            {% for card in availableCards %}
-                <div class="match-card">
-                    <h4 class="card-name">{{ card.card.name }}</h4>
-                    <p class="card-effect">{{ card.card.effect }}</p>
-                    <p class="card-quantity">Quantité : {{ card.quantity }}</p>
-
-                    <form method="POST" action="{{ path('app_tournament_match_use_card', {
-                        tournamentId: tournament.id,
-                        id: match.id,
-                        cardId: card.card.id
-                    }) }}">
-                        <input type="hidden" name="_token" value="{{ csrf_token('use_card_' ~ card.id) }}">
-
-                        <button type="submit"
-                                class="btn-activate"
-                                {% if match.score1 is not null and match.score1 <= 0 or match.score2 is not null and match.score2 <= 0 %}disabled{% endif %}>
-                            Activer
-                        </button>
-                    </form>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p class="empty-text">Aucune carte disponible pour vous.</p>
-        {% endif %}
-    </div>
+    
 
     <h2 class="section-title">🪄 Cartes utilisées pendant le match</h2>
 
-    <div class="used-cards-grid">
-        {% if usedCards is not empty %}
-            {% for play in usedCards %}
-                <div class="used-card">
-                    <p class="used-card-name">{{ play.card.name }}</p>
-                    <p class="used-card-info">
-                        Utilisée par 
-                        <span class="used-by">
-                            {{ play.usedBy.userIdentifier }}
-                        </span>
-                        à {{ play.usedAt|date('H:i') }}
-                    </p>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p class="empty-text">Aucune carte utilisée pour le moment.</p>
-        {% endif %}
-    </div>
-
+    
     {# --- Validation finale du match (referee only) --- #}
     {% if (is_granted('ROLE_REFEREE') or match.tournament.referees.contains(app.user)) and not match.isValidated %}
         <form method="post" class="validate-form">
