@@ -1,0 +1,52 @@
+<nav class="gaming-navbar">
+
+    {# -------- DESKTOP NAVBAR -------- #}
+    <div class="nav-desktop">
+        <div class="nav-left">
+            <a href="{{ path('app_home') }}" class="nav-logo">QADR</a>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a href="{{ path('app_tournament') }}">Tournois</a></li>
+            <li><a href="#">Règles</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+
+        <div class="nav-right">
+            {% if app.user %}
+                <a href="{{ path('app_profile') }}" class="nav-user">{{ app.user.email }}</a>
+                <a href="{{ path('app_logout') }}" class="nav-logout">Déconnexion</a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="nav-auth">Connexion</a>
+                <a href="{{ path('app_register') }}" class="nav-auth">Inscription</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {# -------- MOBILE BOTTOM NAV -------- #}
+    <div class="nav-mobile">
+        <a href="{{ path('app_home') }}" class="m-item">
+            <span>🏠</span>
+            <small>Home</small>
+        </a>
+        <a href="{{ path('app_tournament') }}" class="m-item">
+            <span>🎮</span>
+            <small>Tournois</small>
+        </a>
+        
+
+        {% if app.user %}
+            <a href="{{ path('app_profile') }}" class="m-item">
+                <span>👤</span>
+                <small>Profil</small>
+            </a>
+        {% else %}
+            <a href="{{ path('app_login') }}" class="m-item">
+                <span>🔐</span>
+                <small>Login</small>
+            </a>
+        {% endif %}
+    </div>
+
+</nav>

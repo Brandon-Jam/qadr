@@ -3,35 +3,40 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
+
 <section class="intro-hero">
-  <div class="overlay"></div>
-  <div class="hero-content">
-    <h1>Bienvenue dans l’Arène</h1>
-    <p>Des tournois épiques. Des cartes uniques. Un seul objectif : la victoire.</p>
-    <a href="{{ path('app_tournament') }}" class="cta-btn">Entrer dans le jeu</a>
-  </div>
+    <div class="overlay"></div>
+    <div class="hero-content">
+        <h1>Bienvenue dans l’Arène</h1>
+        <p>Participe à des tournois épiques et utilise des cartes pour renverser tes adversaires.</p>
+
+        <a href="{{ path('app_tournament') }}" class="cta-btn">Entrer dans le jeu</a>
+    </div>
 </section>
 
 <section class="about">
-  <h2>Un nouveau concept de tournois</h2>
-  <p>
-    Ici, chaque combat est unique. Utilise des cartes spéciales pour influencer le
-    cours du match, affronte d’autres joueurs et grimpe dans le classement.
-  </p>
+    <h2>Le concept</h2>
+    <p>
+        Système unique : combats, cartes, stratégies et classement.  
+        Deviens la légende de ton tournoi.
+    </p>
 </section>
 
 <section class="features-mini">
-  <div class="feat">
-    <h3>🏆 Tournois</h3>
-    <p>Participe à des affrontements intenses.</p>
-  </div>
-  <div class="feat">
-    <h3>🃏 Cartes</h3>
-    <p>Utilise ta stratégie pour renverser la partie.</p>
-  </div>
-  <div class="feat">
-    <h3>🔥 Classements</h3>
-    <p>Grimpe jusqu’au sommet et deviens une légende.</p>
-  </div>
+    <div class="feat">
+        <h3>🏆 Tournois</h3>
+        <p>Affronte d'autres joueurs en 1v1.</p>
+    </div>
+
+    <div class="feat">
+        <h3>🃏 Cartes</h3>
+        <p>Active des effets et modifie le destin du match.</p>
+    </div>
+
+    <div class="feat">
+        <h3>🔥 Classements</h3>
+        <p>Monte, grimpe, domine le classement.</p>
+    </div>
 </section>
+
 {% endblock %}

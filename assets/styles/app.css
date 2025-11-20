@@ -1,0 +1,21 @@
+/* Base */
+@import "./base/reset.css";
+@import "./base/variables.css";
+@import "./base/typography.css";
+@import "./base/global.css";
+
+/* Components */
+@import "./components/navbar.css";
+@import "./components/buttons.css";
+
+/* Pages */
+@import "./pages/home.css";
+@import "./pages/tournament-list.css";
+@import "./pages/tournament.css";
+@import "./pages/shop.css";
+@import "./pages/inventory.css";
+@import "./pages/tournament-profil.css";
+@import "./pages/match.css";
+@import "./pages/match-show.css";
+@import "./pages/login.css";
+@import "./pages/register.css";

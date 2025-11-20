@@ -21,7 +21,7 @@
           <a href="{{ path('app_tournament_show', { id: tournament.id }) }}" class="card-link">
             <div class="tournament-img">
               <img 
-                src="{{ tournament.image ? asset('img/tournaments/' ~ tournament.image) : asset('images/tournaments/default.jpg') }}" 
+                src="{{ tournament.image ? asset('img/tournaments/' ~ tournament.image) }}" 
                 alt="Image du tournoi {{ tournament.name }}">
             </div>
 

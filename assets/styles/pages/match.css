@@ -1,0 +1,193 @@
+/* =========================================
+   MATCH LIST — MOBILE FIRST (ONE-LINE)
+========================================= */
+
+.match-list-section {
+  padding: 2rem 1rem;
+  color: #fff;
+  text-align: center;
+}
+
+/* TITRE */
+.page-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.3rem;
+  color: #00eaff;
+  text-shadow: 0 0 12px #00eaff;
+  margin-bottom: 1rem;
+}
+
+.tournament-info {
+  font-size: 0.85rem;
+  color: #ccc;
+  margin-bottom: 2rem;
+}
+
+/* SECTION TITLES */
+.section-title {
+  font-size: 1rem;
+  font-family: 'Press Start 2P', cursive;
+  color: #ff66cc;
+  text-shadow: 0 0 10px #ff66cc;
+  margin: 1.5rem 0 1rem;
+}
+
+/* GRID */
+.matches-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* =========================================
+   MATCH CARD — LIGNE UNIQUE
+========================================= */
+
+.match-card {
+  background: #121221;
+  border: 2px solid #1a1a3a;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 0 12px rgba(0,255,255,0.12);
+}
+
+/* Ligne principale */
+.match-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+/* JOUEURS */
+.player-side {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.neon-avatar-blue img {
+  border: 2px solid #00eaff;
+  box-shadow: 0 0 10px #00eaff;
+}
+
+.neon-avatar-pink img {
+  border: 2px solid #ff007f;
+  box-shadow: 0 0 10px #ff007f;
+}
+
+.avatar-gray img {
+  border: 2px solid #555;
+  filter: grayscale(100%);
+  opacity: 0.6;
+}
+
+.player-name {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.player-hp {
+  font-size: 0.75rem;
+  color: #00ff9f;
+}
+
+/* VS */
+.vs-circle {
+  width: 48px;
+  height: 48px;
+  background: #ff0044;
+  border-radius: 50%;
+  font-family: 'Press Start 2P', cursive;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-shadow: 0 0 12px #ff0044;
+  box-shadow: 0 0 14px #ff0044;
+  font-size: 0.7rem;
+}
+
+/* FOOTER (SOUS LA LIGNE) */
+.match-footer {
+  margin-top: 0.8rem;
+  text-align: center;
+}
+
+.status {
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.text-warning { color: #ffe066; }
+.text-info { color: #00eaff; }
+.text-success { color: #00ff9f; }
+
+/* BUTTONS */
+.btn-view,
+.btn-manage {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.75rem;
+  color: #fff;
+  text-decoration: none;
+}
+
+.btn-view {
+  background: #00eaff;
+  box-shadow: 0 0 12px #00eaff;
+}
+
+.btn-manage {
+  background: #ff007f;
+  box-shadow: 0 0 12px #ff007f;
+}
+
+/* TERMINÉ */
+.match-finished {
+  border-color: #00ff9f;
+  box-shadow: 0 0 16px #00ff9f;
+}
+
+/* =========================================
+   DESKTOP (>768px)
+========================================= */
+@media (min-width: 768px) {
+
+  .matches-grid {
+    gap: 1.5rem;
+  }
+
+  .match-card {
+    padding: 1.4rem;
+  }
+
+  .player-name {
+    font-size: 1rem;
+  }
+
+  .player-hp {
+    font-size: 0.85rem;
+  }
+
+  .vs-circle {
+    width: 60px;
+    height: 60px;
+    font-size: 0.85rem;
+  }
+
+  .btn-view,
+  .btn-manage {
+    font-size: 0.85rem;
+  }
+}

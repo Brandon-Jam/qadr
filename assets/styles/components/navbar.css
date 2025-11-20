@@ -1,0 +1,107 @@
+/* ============================
+   NAVBAR - MOBILE FIRST
+============================ */
+
+/* ---- Mobile navbar at bottom ---- */
+.nav-desktop {
+  display: none;
+}
+
+.nav-mobile {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 65px;
+  background: #0b0b0f;
+  border-top: 2px solid #ff0044;
+  box-shadow: 0 -4px 12px #ff0044;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 9999;
+}
+
+.nav-mobile .m-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.55rem;
+  transition: 0.2s;
+}
+
+.nav-mobile .m-item span {
+  font-size: 1.3rem;
+  text-shadow: 0 0 10px #ff0044;
+}
+
+.nav-mobile .m-item:hover {
+  transform: scale(1.15);
+  color: #ff0044;
+}
+
+/* ============================
+   DESKTOP NAVBAR
+============================ */
+@media (min-width: 768px) {
+
+  .nav-mobile {
+    display: none;
+  }
+
+  .nav-desktop {
+    display: flex;
+    height: 70px;
+    background: #0a0a0d;
+    border-bottom: 2px solid #ff0044;
+    box-shadow: 0 4px 12px #ff0044;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+  }
+
+  .nav-logo {
+    font-family: 'Press Start 2P', cursive;
+    color: #ff0044;
+    font-size: 1rem;
+    text-decoration: none;
+    text-shadow: 0 0 8px #ff0044;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+  }
+
+  .nav-links a {
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    text-decoration: none;
+    transition: 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: #ff0044;
+    text-shadow: 0 0 10px #ff0044;
+  }
+
+  .nav-right a {
+    margin-left: 1rem;
+    color: #ff80a8;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    text-decoration: none;
+  }
+
+  .nav-right a:hover {
+    color: #ff0044;
+  }
+}

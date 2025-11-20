@@ -2,47 +2,20 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
         {% endblock %}
 
         {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
     <body>
-
-    <nav class="gaming-navbar">
-  <div class="logo">
-    <a href="#">MonLogo</a>
-  </div>
-  <ul class="nav-links">
-    <li><a href="{{ path('app_home') }}">Accueil</a></li>
-    <li><a href="{{ path('app_tournament') }}">Tournois</a></li>
-    <li><a href="#contact">Règles</a></li>
-
-      {% if app.user %}
-                    <li >
-                        <a href="{{ path('app_profile') }}">{{ app.user.email }}</a>
-                    </li>
-                    <li >
-                        <a  href="{{ path('app_logout') }}">Déconnexion</a>
-                    </li>
-                {% else %}
-                    <li>
-                        <a  href="{{ path('app_login') }}">Connexion</a>/
-                   
-                        <a  href="{{ path('app_register') }}">Inscription</a>
-                    </li>
-                {% endif %}
-
-    <li><a href="#contact">Contact</a></li>
-
-  </ul>
-</nav>
-
-</nav> {% block body %}
+{% include 'components/navbar.html.twig' %}
+    {% block body %}
 {% endblock %}
     </body>
 </html>

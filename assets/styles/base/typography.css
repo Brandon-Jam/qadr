@@ -1,0 +1,9 @@
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+h1, h2, h3 {
+  font-family: var(--font-title);
+  color: var(--color-primary);
+}

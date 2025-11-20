@@ -1,0 +1,382 @@
+/* =========================================
+   HEADER DU TOURNOI — MOBILE FIRST
+========================================= */
+.tournament-header {
+  background: #0a0a0a;
+  padding: 1.5rem 1rem;
+}
+
+.tournament-header-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+/* IMAGE DU TOURNOI */
+.tournament-image img {
+  width: 100%;
+  max-width: 340px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #ff0044;
+  box-shadow: 0 0 15px #ff0044;
+}
+
+/* INFO DU TOURNOI */
+.tournament-info {
+  text-align: center;
+  color: #fff;
+}
+
+.tournament-info h1 {
+  font-size: 1.4rem;
+  font-family: 'Press Start 2P', cursive;
+  color: #00eaff;
+  text-shadow: 0 0 12px #00eaff;
+}
+
+.tournament-info .meta {
+  font-size: 0.8rem;
+  color: #ddd;
+  margin-top: 0.4rem;
+}
+
+.slots {
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  color: #ff66cc;
+  text-shadow: 0 0 8px #ff66cc;
+}
+
+.banner-actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+
+/* =========================================
+   BOUTONS — cohérents avec components/buttons.css
+========================================= */
+
+.btn-neon,
+.btn-join,
+.btn-login-neon,
+.btn-matches,
+.btn-shop,
+.btn-joined,
+.btn-disabled {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 0.7rem 1.2rem;
+  font-size: 0.75rem;
+  border-radius: 8px;
+  font-family: 'Press Start 2P', cursive;
+  text-decoration: none;
+  transition: 0.25s;
+}
+
+.btn-neon,
+.btn-login-neon {
+  background: #00eaff;
+  color: #000;
+  box-shadow: 0 0 12px #00eaff;
+}
+
+.btn-join {
+  background: #ff0044;
+  box-shadow: 0 0 12px #ff0044;
+}
+
+.btn-matches {
+  background: #ff007f;
+  box-shadow: 0 0 12px #ff007f;
+}
+
+.btn-shop {
+  background: #00ff9f;
+  color: #000;
+  box-shadow: 0 0 12px #00ff9f;
+}
+
+.btn-joined {
+  background: #00ff9f;
+  color: #000;
+  opacity: 0.8;
+}
+
+.btn-disabled {
+  background: #555;
+  color: #aaa;
+}
+
+
+/* =========================================
+   PARTICIPANTS — 2 colonnes mobile-first
+========================================= */
+.tournament-participants {
+  padding: 2rem 1rem;
+}
+
+.tournament-participants h2 {
+  font-size: 1.3rem;
+  text-align: center;
+  color: #00eaff;
+  margin-bottom: 1.2rem;
+  font-family: 'Press Start 2P', cursive;
+  text-shadow: 0 0 12px #00eaff;
+}
+
+.participants-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* ✔️ 2 colonnes direct */
+  gap: 1rem;
+}
+
+/* CARD DU JOUEUR */
+.player-card {
+  background: #0f0f17;
+  border: 2px solid #ff0044;
+  border-radius: 12px;
+  padding: 0.8rem;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255,0,68,0.35);
+  transition: 0.25s;
+}
+
+.player-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 18px rgba(255,0,68,0.6);
+}
+
+/* Joueur éliminé */
+.player-eliminated {
+  opacity: 0.4;
+  filter: grayscale(1);
+  border-color: #555;
+}
+
+/* Avatar */
+.player-avatar img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ff007f;
+  box-shadow: 0 0 8px #ff007f;
+}
+
+.player-hp {
+  margin: 0.3rem 0;
+  color: #00ff9f;
+  font-size: 0.75rem;
+}
+
+.player-info h3 {
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  color: #00eaff;
+}
+
+.tag {
+  background: #00eaff;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.6rem;
+  border-radius: 6px;
+  color: #000;
+  display: inline-block;
+  margin-top: 0.2rem;
+}
+
+.eliminated-badge {
+  margin-top: 0.4rem;
+  display: inline-block;
+  color: #ff0044;
+  font-size: 0.75rem;
+  text-shadow: 0 0 10px #ff0044;
+}
+
+/* Bouton défier */
+.btn-challenge {
+  margin-top: 0.4rem;
+  background: #ff0044;
+  padding: 0.4rem 0.6rem;
+  color: #fff;
+  border-radius: 6px;
+  display: inline-block;
+  font-size: 0.75rem;
+  box-shadow: 0 0 10px #ff0044;
+  text-decoration: none;
+}
+
+
+/* =========================================
+   INVITATIONS REÇUES
+========================================= */
+.invite-box {
+  margin: 2rem 1rem;
+  padding: 1rem;
+  background: #111;
+  border-radius: 10px;
+  box-shadow: 0 0 12px #ff0044;
+}
+
+.invite-box h3 {
+  font-family: 'Press Start 2P', cursive;
+  color: #ff0044;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.invite-item {
+  padding: 0.8rem;
+  background: #1a1a2e;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.btn-accept {
+  background: #00ff9f;
+  color: #000;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  margin-right: 0.6rem;
+}
+
+.btn-refuse {
+  background: #ff0044;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+
+/* =========================================
+   CLASSEMENT — centré ✔️
+========================================= */
+.tournament-ranking {
+  padding: 2rem 1rem;
+}
+
+.tournament-ranking h2 {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #00eaff;
+  text-shadow: 0 0 12px #00eaff;
+  font-family: 'Press Start 2P', cursive;
+  margin-bottom: 1rem;
+}
+
+.ranking-table {
+  width: 100%;
+  text-align: center; /* ✔️ centre tout */
+  border-collapse: collapse;
+  color: #fff;
+}
+
+.ranking-table th,
+.ranking-table td {
+  padding: 0.6rem;
+  font-size: 0.8rem;
+}
+
+.ranking-table th {
+  background: #1a1a3a;
+}
+
+.ranking-table tr:nth-child(even) {
+  background: #111;
+}
+
+
+/* =========================================
+   CARTES DISPONIBLES
+========================================= */
+.tournament-cards {
+  padding: 2rem 1rem;
+}
+
+.tournament-cards h2 {
+  font-size: 1.2rem;
+  color: #ff66cc;
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  text-shadow: 0 0 12px #ff66cc;
+  margin-bottom: 1rem;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.4rem;
+}
+
+.card-element {
+  background: linear-gradient(145deg, #141427, #0b0b15);
+  border: 2px solid #1a1a3a;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(0,255,255,0.15);
+}
+
+.card-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.card-info h3 {
+  color: #00eaff;
+  text-shadow: 0 0 8px #00eaff;
+  margin-top: 0.6rem;
+}
+
+.bonus {
+  font-size: 0.8rem;
+  color: #ccc;
+  margin-top: 0.3rem;
+}
+
+
+/* =========================================
+   DESKTOP (> 768px)
+========================================= */
+@media (min-width: 768px) {
+
+  .tournament-header-inner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .tournament-info {
+    text-align: left;
+    max-width: 50%;
+  }
+
+  .tournament-image img {
+    max-width: 440px;
+    height: 240px;
+  }
+
+  .participants-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1100px) {
+  .participants-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

@@ -1,0 +1,166 @@
+/* =========================================
+   PROFIL TOURNOI — MOBILE FIRST
+========================================= */
+
+.tournament-profil {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #fff;
+}
+
+/* TITRE PRINCIPAL */
+.tournament-profil h1 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.2rem;
+  color: #00eaff;
+  text-shadow: 0 0 12px #00eaff;
+  margin-bottom: 1.2rem;
+}
+
+/* INFOS */
+.tournament-profil p {
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+/* -----------------------------------------
+   CARTES POSSEDÉES
+----------------------------------------- */
+
+.tournament-profil h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-family: 'Press Start 2P', cursive;
+  color: #ff66cc;
+  text-shadow: 0 0 10px #ff66cc;
+}
+
+.tournament-profil .card {
+  background: linear-gradient(145deg, #141427, #0b0b15);
+  border: 2px solid #1a1a3a;
+  border-radius: 10px;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 0 12px rgba(0,255,255,0.15);
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+/* -----------------------------------------
+   MATCHS
+----------------------------------------- */
+
+.tournament-profil ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.tournament-profil li {
+  background: #111;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  border: 1px solid #333;
+  color: #ddd;
+  font-size: 0.85rem;
+  box-shadow: 0 0 10px rgba(255,0,68,0.3);
+}
+
+.tournament-profil a {
+  color: #00eaff;
+  text-decoration: none;
+  text-shadow: 0 0 6px #00eaff;
+}
+
+/* =========================================
+   STATS DU JOUEUR
+========================================= */
+
+.player-tournament-stats {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #fff;
+}
+
+/* TITRE */
+.neon-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.1rem;
+  color: #00ff9f;
+  text-shadow: 0 0 12px #00ff9f;
+  margin-bottom: 1.5rem;
+}
+
+/* GRID DES STATS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* CARTE STAT */
+.stat-card {
+  background: linear-gradient(145deg, #141427, #0b0b15);
+  border: 2px solid #1a1a3a;
+  border-radius: 12px;
+  padding: 1.2rem 1rem;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0,255,255,0.12);
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  color: #00eaff;
+  text-shadow: 0 0 10px #00eaff;
+  margin-bottom: 0.2rem;
+  font-weight: bold;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #ccc;
+}
+
+/* -----------------------------------------
+   CARTE HIGHLIGHT
+----------------------------------------- */
+
+.highlight-card {
+  margin-top: 1.5rem;
+  background: #111;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 2px solid #ff007f;
+  box-shadow: 0 0 14px #ff007f;
+}
+
+.highlight-card .highlight {
+  color: #ff66cc;
+  text-shadow: 0 0 12px #ff66cc;
+  font-weight: bold;
+}
+
+/* =========================================
+   DESKTOP (> 768px)
+========================================= */
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .tournament-profil h1 {
+    font-size: 1.6rem;
+  }
+
+  .stat-card {
+    padding: 1.6rem;
+  }
+
+  .stat-value {
+    font-size: 1.6rem;
+  }
+}

@@ -1,0 +1,131 @@
+/* ============================
+   HERO (mobile-first)
+============================ */
+.intro-hero {
+  position: relative;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem;
+  background: #000;
+  overflow: hidden;
+}
+
+.intro-hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  box-shadow: inset 0 0 40px var(--color-primary);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 330px;
+}
+
+.intro-hero h1 {
+  font-size: 1.3rem;
+  line-height: 1.4;
+  color: var(--color-primary);
+  text-shadow: var(--shadow-neon);
+}
+
+.intro-hero p {
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: #ddd;
+  line-height: 1.4;
+}
+
+/* CTA Button */
+.cta-btn {
+  display: inline-block;
+  padding: 0.8rem 1.2rem;
+  background: var(--color-primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-family: var(--font-title);
+  box-shadow: var(--shadow-neon);
+  margin-top: 1rem;
+}
+
+
+/* ============================
+   ABOUT
+============================ */
+.about {
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+
+.about h2 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.about p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #ccc;
+}
+
+
+/* ============================
+   FEATURES (MOBILE FIRST)
+============================ */
+.features-mini {
+  display: flex;
+  flex-direction: column;   /* 👉 100% vertical mobile */
+  gap: 1.2rem;
+  padding: 2rem 1.5rem;
+}
+
+.feat {
+  border: 2px solid var(--color-primary);
+  padding: 1.3rem;
+  border-radius: 10px;
+  background: #0f0f0f;
+  text-align: center;
+  box-shadow: var(--shadow-neon);
+}
+
+.feat h3 {
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.feat p {
+  font-size: 0.8rem;
+  color: #ddd;
+}
+
+
+/* ============================
+   DESKTOP (>= 768px)
+============================ */
+@media (min-width: 768px) {
+
+  .intro-hero {
+    height: 100vh;
+  }
+
+  .intro-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .features-mini {
+    flex-direction: row;   /* 👉 Desktop = en ligne */
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .feat {
+    max-width: 260px;
+  }
+}

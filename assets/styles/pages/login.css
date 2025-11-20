@@ -1,0 +1,140 @@
+/* ===========================
+   LOGIN PAGE – mobile first
+=========================== */
+
+.login-hero {
+  position: relative;
+  min-height: 100vh;
+  padding: 2rem 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+/* Overlay gaming */
+.login-hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  box-shadow: inset 0 0 50px #ff0044;
+  z-index: 1;
+}
+
+/* BOX DE CONNEXION */
+.login-box {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 380px;
+  padding: 2rem 1.5rem;
+  background: #111122;
+  border-radius: 12px;
+  border: 2px solid #ff0044;
+  box-shadow: 0 0 25px rgba(255, 0, 68, 0.4);
+  text-align: center;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+}
+
+/* TITRE */
+.login-box h1 {
+  font-size: 1rem;
+  color: #ff0044;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 10px #ff0044;
+}
+
+/* ERREUR */
+.error-message {
+  background: #390010;
+  border: 1px solid #ff0044;
+  padding: 0.8rem;
+  border-radius: 8px;
+  color: #ff6688;
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  box-shadow: 0 0 15px rgba(255, 0, 68, 0.3);
+}
+
+/* FORM GROUP */
+.form-group {
+  text-align: left;
+  margin-bottom: 1.2rem;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.75rem;
+  margin-bottom: 0.4rem;
+  color: #00eaff;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #0d0d17;
+  color: #fff;
+  font-size: 0.75rem;
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.2);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #00eaff;
+  box-shadow: 0 0 15px #00eaff;
+}
+
+/* BOUTON LOGIN */
+.btn-login {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.75rem;
+  background: linear-gradient(90deg, #ff0044, #ff66cc);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Press Start 2P', cursive;
+  box-shadow: 0 0 12px rgba(255, 0, 68, 0.7);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 0, 68, 1);
+}
+
+/* LIEN INSCRIPTION */
+.register-text {
+  margin-top: 1.2rem;
+  font-size: 0.7rem;
+  color: #ccc;
+}
+
+.register-text a {
+  color: #00eaff;
+  text-shadow: 0 0 8px #00eaff;
+  text-decoration: none;
+}
+
+.register-text a:hover {
+  color: #ff66cc;
+  text-shadow: 0 0 8px #ff66cc;
+}
+
+/* DESKTOP */
+@media (min-width: 768px) {
+  .login-box {
+    padding: 2.5rem 2rem;
+  }
+
+  .login-box h1 {
+    font-size: 1.2rem;
+  }
+}

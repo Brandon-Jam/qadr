@@ -1,0 +1,12 @@
+.cta-btn {
+  display: inline-block;
+  padding: .8rem 1.2rem;
+  background: var(--color-primary);
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  box-shadow: var(--shadow-neon);
+  margin-top: 1rem;
+}

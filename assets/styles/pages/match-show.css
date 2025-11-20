@@ -1,0 +1,355 @@
+/* ============================
+   MATCH VIEW – mobile first
+============================ */
+
+.match-view {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+/* Titre du match */
+.match-title {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #ff0044;
+  text-shadow: 0 0 10px #ff0044;
+  margin-bottom: 0.8rem;
+}
+
+.match-title span {
+  color: #00eaff;
+}
+
+/* Phase actuelle */
+.phase-indicator {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #ccc;
+  margin-bottom: 1.5rem;
+}
+
+.phase-indicator strong {
+  color: #ff66cc;
+}
+
+/* ============================
+   SCORE / HP
+============================ */
+
+.hp-container {
+  display: grid;
+  grid-template-columns: 1fr 50px 1fr; /* joueur | VS | joueur */
+  align-items: center;
+  gap: 1rem;
+
+  background: #10101c;
+  padding: 1.2rem;
+  border-radius: 12px;
+  border: 1px solid #262647;
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.1);
+  margin-bottom: 2rem;
+}
+
+.hp-container .player {
+  text-align: center;
+  color: #fff;
+}
+
+.hp-container .player h3 {
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+  color: #00eaff;
+}
+
+/* VS au centre */
+.hp-vs {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  color: #ff0044;
+  text-shadow: 0 0 10px #ff0044;
+  text-align: center;
+}
+
+/* Cœurs */
+.hearts {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.heart {
+  font-size: 1.1rem;
+}
+
+.heart.full {
+  filter: drop-shadow(0 0 5px #ff0044);
+}
+
+.heart.empty {
+  opacity: 0.5;
+}
+
+/* Barre HP */
+.hp-bar {
+  width: 100%;
+  max-width: 260px;
+  height: 10px;
+  background: #333;
+  border-radius: 999px;
+  margin: 0.4rem auto;
+  overflow: hidden;
+  border: 1px solid #555;
+}
+
+.hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff9f, #00eaff);
+  box-shadow: 0 0 10px #00ff9f;
+  transition: width 0.3s ease;
+}
+
+.hp-text {
+  font-size: 0.75rem;
+  color: #ccc;
+}
+
+/* ============================
+   PHASE CARTES
+============================ */
+
+.section-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.85rem;
+  color: #ff66cc;
+  text-align: center;
+  text-shadow: 0 0 10px #ff66cc;
+  margin: 2rem 0 1rem;
+}
+
+/* Statut ready */
+.ready-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #ddd;
+  margin-bottom: 1.2rem;
+}
+
+.ready-status p:first-child {
+  color: #00ff9f;
+}
+
+.ready-status p:last-child {
+  color: #ffcc00;
+}
+
+/* Box cartes jouées / adverses */
+.cards-phase {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.cards-phase .my-cards,
+.cards-phase .opp-cards {
+  background: #10101c;
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #262647;
+}
+
+.cards-phase h3 {
+  font-size: 0.8rem;
+  color: #00eaff;
+  margin-bottom: 0.4rem;
+}
+
+.cards-phase p,
+.cards-phase li {
+  font-size: 0.78rem;
+  color: #ccc;
+}
+
+.cards-phase ul {
+  padding-left: 1rem;
+  margin: 0.4rem 0 0;
+}
+
+.cards-phase em {
+  font-size: 0.7rem;
+  color: #999;
+}
+
+/* Cartes disponibles */
+.available-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.small-card-btn {
+  font-size: 0.7rem;
+  padding: 0.4rem 0.7rem;
+  margin: 0.15rem;
+}
+
+/* Zone READY */
+.ready-zone {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.info-text {
+  font-size: 0.75rem;
+  text-align: center;
+  color: #aaa;
+  margin-bottom: 1.5rem;
+}
+
+/* ============================
+   PHASE BATTLE / VALIDATED
+============================ */
+
+.used-card-list {
+  list-style: none;
+  padding: 0.8rem 0.9rem;
+  background: #10101c;
+  border-radius: 10px;
+  border: 1px solid #262647;
+  margin-bottom: 1.5rem;
+}
+
+.used-card-list li {
+  font-size: 0.78rem;
+  color: #ddd;
+  margin-bottom: 0.3rem;
+}
+
+/* ============================
+   FORMULAIRES REFEREE
+============================ */
+
+.score-form,
+.validate-form {
+  margin: 1.3rem 0;
+  text-align: center;
+}
+
+.score-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.score-inputs label {
+  font-size: 0.78rem;
+  color: #ccc;
+}
+
+.score-inputs input[type="number"] {
+  width: 80px;
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #0b0b15;
+  color: #fff;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.score-form .btn-neon {
+  margin-top: 0.6rem;
+}
+
+/* ============================
+   BOUTONS UTILISÉS ICI
+   (en complément de components/buttons.css)
+============================ */
+
+.btn-neon {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.75rem;
+  border-radius: 8px;
+  font-family: 'Press Start 2P', cursive;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(90deg, #ff0044, #ff66cc);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255, 0, 68, 0.7);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-neon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(255, 0, 68, 0.9);
+}
+
+.btn-red {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #ff0044;
+  color: #fff;
+  box-shadow: 0 0 10px #ff0044;
+}
+
+/* Bouton retour */
+.btn-back {
+  display: inline-block;
+  margin-top: 2rem;
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #fff;
+  border: 1px solid #444;
+  background: #151525;
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.4);
+}
+
+/* ============================
+   DESKTOP (>= 768px)
+============================ */
+
+@media (min-width: 768px) {
+  .match-title {
+    font-size: 1.1rem;
+  }
+
+  .hp-container {
+    grid-template-columns: 1fr 80px 1fr;
+  }
+
+  .hp-vs {
+    font-size: 1rem;
+  }
+
+  .cards-phase {
+    flex-direction: row;
+  }
+
+  .cards-phase .my-cards,
+  .cards-phase .opp-cards {
+    width: 50%;
+  }
+
+  .score-inputs {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+  }
+}

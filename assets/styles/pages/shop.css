@@ -1,0 +1,134 @@
+/* =========================================
+   BOUTIQUE DU TOURNOI — MOBILE FIRST
+========================================= */
+
+.tournament-shop {
+  padding: 2rem 1rem;
+  color: #fff;
+  text-align: center;
+}
+
+/* TITRE */
+.shop-title {
+  font-size: 1.4rem;
+  font-family: 'Press Start 2P', cursive;
+  color: #00eaff;
+  text-shadow: 0 0 10px #00eaff;
+  margin-bottom: 0.5rem;
+}
+
+.shop-title span {
+  color: #ff007f;
+  text-shadow: 0 0 10px #ff007f;
+}
+
+/* CRÉDITS */
+.credits {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: #ddd;
+}
+
+/* GRID DES CARTES */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.4rem;
+}
+
+/* CARD */
+.shop-card {
+  background: linear-gradient(145deg, #141427, #0b0b15);
+  border: 2px solid #1a1a3a;
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  box-shadow: 0 0 15px rgba(0,255,255,0.1);
+  transition: 0.25s;
+}
+
+.shop-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 20px rgba(0,255,255,0.3);
+}
+
+.card-name {
+  color: #00eaff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-shadow: 0 0 6px #00eaff;
+  margin-bottom: 0.4rem;
+}
+
+.card-effect {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin: 0.6rem 0;
+  font-style: italic;
+}
+
+.card-cost {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: #ff007f;
+  font-weight: bold;
+  text-shadow: 0 0 8px #ff007f;
+}
+
+/* =========================================
+   BOUTON ACHETER
+========================================= */
+
+.btn-buy {
+  display: block;
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 1rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-family: 'Press Start 2P', cursive;
+  color: #000;
+  background: #00ff9f;
+  box-shadow: 0 0 12px #00ff9f;
+  transition: 0.2s;
+}
+
+.btn-buy:hover {
+  background: #00ffaa;
+  box-shadow: 0 0 20px #00ff9f;
+}
+
+/* Si pas assez de crédits */
+.btn-buy.disabled,
+.btn-buy:disabled {
+  background: #444;
+  color: #aaa;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   TEXTE VIDE
+========================================= */
+.empty-text {
+  font-size: 1.1rem;
+  color: #777;
+  margin-top: 2rem;
+}
+
+
+/* =========================================
+   DESKTOP (> 768px)
+========================================= */
+
+@media (min-width: 768px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .shop-card {
+    padding: 2rem 1.5rem;
+  }
+}
