@@ -105,3 +105,9 @@
     color: #ff0044;
   }
 }
+
+@media (max-width: 768px) {
+  .page-content {
+    margin-bottom: 80px;
+  }
+}

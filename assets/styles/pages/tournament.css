@@ -219,41 +219,63 @@
    INVITATIONS REÇUES
 ========================================= */
 .invite-box {
-  margin: 2rem 1rem;
-  padding: 1rem;
-  background: #111;
-  border-radius: 10px;
-  box-shadow: 0 0 12px #ff0044;
+  background: #0b0b0f;
+  border: 2px solid #ff0044;
+  box-shadow: 0 0 15px #ff0044;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
 }
 
 .invite-box h3 {
-  font-family: 'Press Start 2P', cursive;
+  font-size: 0.9rem;
   color: #ff0044;
+  text-shadow: 0 0 10px #ff0044;
+  margin-bottom: 1.2rem;
   text-align: center;
-  margin-bottom: 1rem;
 }
 
-.invite-item {
-  padding: 0.8rem;
-  background: #1a1a2e;
+.invite-item p {
+  font-size: 0.7rem;
+  margin: 0;
+  text-align: center;
+}
+
+.invite-item a {
+  text-decoration: none;
+  padding: 10px 0;
+  font-size: 0.65rem;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  font-family: 'Press Start 2P', monospace;
+  text-align: center;
+  display: block;
+  transition: 0.25s ease;
 }
 
 .btn-accept {
-  background: #00ff9f;
+  background: #0f0;
   color: #000;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  margin-right: 0.6rem;
+  box-shadow: 0 0 10px #0f0;
+  border: 1px solid #0f0;
+}
+
+.btn-accept:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #0f0;
 }
 
 .btn-refuse {
   background: #ff0044;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
+  color: #fff;
+  border: 1px solid #ff0044;
+  box-shadow: 0 0 10px #ff0044;
+}
+
+.btn-refuse:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ff0044;
 }
 
 

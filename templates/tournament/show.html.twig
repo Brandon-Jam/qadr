@@ -121,7 +121,7 @@
 
                 {% for invite in invites %}
                     <div class="invite-item">
-                        <p>{{ invite.challenger.user.email }} vous défie !</p>
+                        <p>{{ invite.challenger.user.pseudo }} vous défie !</p>
 
                         <a class="btn-accept"
                            href="{{ path('match_invite_accept', {inviteId: invite.id}) }}">

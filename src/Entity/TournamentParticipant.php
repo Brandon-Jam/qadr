@@ -37,6 +37,12 @@ class TournamentParticipant
     #[ORM\Column(type: 'boolean')]
     private bool $isEliminated = false;
 
+    #[ORM\OneToMany(mappedBy: 'player1', targetEntity: TournamentMatch::class)]
+private Collection $matchesAsPlayer1;
+
+#[ORM\OneToMany(mappedBy: 'player2', targetEntity: TournamentMatch::class)]
+private Collection $matchesAsPlayer2;
+
     // ----- MATCH INVITES -----
     #[ORM\OneToMany(mappedBy: 'challenger', targetEntity: MatchInvite::class, cascade: ['remove'])]
     private Collection $matchInvitesSent;
@@ -70,6 +76,8 @@ private Collection $tournamentMatchesWon;
         $this->matchInvitesSent = new ArrayCollection();
         $this->matchInvitesReceived = new ArrayCollection();
         $this->tournamentMatchesWon = new ArrayCollection();
+        $this->matchesAsPlayer1 = new ArrayCollection();
+$this->matchesAsPlayer2 = new ArrayCollection();
     }
 
     // -----------------------------------

@@ -15,7 +15,7 @@
 
         <div class="nav-right">
             {% if app.user %}
-                <a href="{{ path('app_profile') }}" class="nav-user">{{ app.user.email }}</a>
+                <a href="{{ path('app_profile') }}" class="nav-user">{{ app.user.pseudo }}</a>
                 <a href="{{ path('app_logout') }}" class="nav-logout">Déconnexion</a>
             {% else %}
                 <a href="{{ path('app_login') }}" class="nav-auth">Connexion</a>
