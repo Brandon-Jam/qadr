@@ -39,7 +39,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $avatar = null;
 
     #[ORM\Column(type: 'string', length: 50, unique: true, nullable: true)]
-private ?string $pseudo = null;
+    private ?string $pseudo = null;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $xp = 0;
 
 
     #[ORM\Column]
@@ -61,6 +64,7 @@ private ?string $pseudo = null;
     {
         $this->tournamentMatches = new ArrayCollection();
         $this->tournament = new ArrayCollection();
+        $this->tournamentParticipations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -139,6 +143,26 @@ private ?string $pseudo = null;
         return $this;
     }
 
+    public function getXp(): int
+    {
+        return $this->xp;
+    }
+
+    public function setXp(int $xp): self
+    {
+        // on évite les valeurs négatives
+        $this->xp = max(0, $xp);
+
+        return $this;
+    }
+
+    public function addXp(int $amount): self
+    {
+        $this->xp = max(0, $this->xp + $amount);
+
+        return $this;
+    }
+
     /**
      * @see UserInterface
      */
@@ -170,6 +194,25 @@ public function setPseudo(?string $pseudo): self
     $this->pseudo = $pseudo;
     return $this;
 }
+
+public function getLevel(): int
+{
+    $xp = $this->xp;
+
+    // 10 niveaux
+    if ($xp < 100) return 1;
+    if ($xp < 250) return 2;
+    if ($xp < 500) return 3;
+    if ($xp < 800) return 4;
+    if ($xp < 1200) return 5;
+    if ($xp < 1700) return 6;
+    if ($xp < 2300) return 7;
+    if ($xp < 3000) return 8;
+    if ($xp < 3800) return 9;
+
+    return 10;
+}
+
     /**
      * @return Collection<int, TournamentMatch>
      */

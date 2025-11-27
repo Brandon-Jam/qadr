@@ -27,13 +27,13 @@ class TournamentMatch
     private ?\DateTimeImmutable $startTime = null;
 
    #[ORM\Column(length: 20)]
-private string $phase = 'cards'; // 'cards', 'battle', 'validated'
+    private string $phase = 'cards'; // 'cards', 'battle', 'validated'
 
-#[ORM\Column(type: 'boolean')]
-private bool $player1Ready = false;
+    #[ORM\Column(type: 'boolean')]
+    private bool $player1Ready = false;
 
-#[ORM\Column(type: 'boolean')]
-private bool $player2Ready = false;
+    #[ORM\Column(type: 'boolean')]
+    private bool $player2Ready = false;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -43,6 +43,9 @@ private bool $player2Ready = false;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isFinished = false;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $combatLog = null;
 
     #[ORM\ManyToOne(inversedBy: 'tournamentMatches')]
     #[ORM\JoinColumn(nullable: false)]
@@ -114,8 +117,6 @@ private bool $player2Ready = false;
 
         return $this;
     }
-
-   
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -214,35 +215,46 @@ private bool $player2Ready = false;
     }
 
     public function getPhase(): string
-{
-    return $this->phase;
-}
+    {
+        return $this->phase;
+    }
 
-public function setPhase(string $phase): self
-{
-    $this->phase = $phase;
-    return $this;
-}
+    public function setPhase(string $phase): self
+    {
+        $this->phase = $phase;
+        return $this;
+    }
 
-public function isPlayer1Ready(): bool
-{
-    return $this->player1Ready;
-}
+    public function isPlayer1Ready(): bool
+    {
+        return $this->player1Ready;
+    }
 
-public function setPlayer1Ready(bool $ready): self
-{
-    $this->player1Ready = $ready;
-    return $this;
-}
+    public function setPlayer1Ready(bool $ready): self
+    {
+        $this->player1Ready = $ready;
+        return $this;
+    }
 
-public function isPlayer2Ready(): bool
-{
-    return $this->player2Ready;
-}
+    public function isPlayer2Ready(): bool
+    {
+        return $this->player2Ready;
+    }
 
-public function setPlayer2Ready(bool $ready): self
-{
-    $this->player2Ready = $ready;
-    return $this;
-}
+    public function setPlayer2Ready(bool $ready): self
+    {
+        $this->player2Ready = $ready;
+        return $this;
+    }
+
+    public function getCombatLog(): ?array
+    {
+        return $this->combatLog;
+    }
+    
+    public function setCombatLog(?array $combatLog): self
+    {
+        $this->combatLog = $combatLog;
+        return $this;
+    }
 }

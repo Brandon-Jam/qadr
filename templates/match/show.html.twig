@@ -3,21 +3,34 @@
 {% block body %}
 <section class="match-view">
 
+{# ------------------------------------- #
+   RÔLE UTILISATEUR
+# ------------------------------------- #}
+
+{# isReferee et currentParticipant viennent DIRECTEMENT du contrôleur #}
+
+{% set isP1 = (not isReferee and currentParticipant and currentParticipant.id == match.player1.id) %}
+{% set isP2 = (not isReferee and currentParticipant and currentParticipant.id == match.player2.id) %}
+
     <h1 class="match-title"> 
-        <span>{{ match.player1.user.email }}</span> vs <span>{{ match.player2.user.email }}</span>
+        <span>{{ match.player1.user.pseudo }}</span> vs 
+        <span>{{ match.player2.user.pseudo }}</span>
     </h1>
 
     <p class="phase-indicator">
         Phase actuelle : <strong>{{ match.phase|capitalize }}</strong>
     </p>
 
-    {# ------------------------------------------------------------- #
-       🔥 SCORE / HP
-    # ------------------------------------------------------------- #}
-    <div class="hp-container">
+
+
+{# ------------------------------------------------------------- #
+   🔥 SCORE / HP
+# ------------------------------------------------------------- #}
+
+<div class="hp-container">
 
     <div class="player">
-        <h3>{{ match.player1.user.email }}</h3>
+        <h3>{{ match.player1.user.pseudo }}</h3>
         <div class="hearts">
             {% for i in 1..3 %}
                 {% if i <= match.score1 %}
@@ -32,7 +45,7 @@
     <div class="hp-vs">VS</div>
 
     <div class="player">
-        <h3>{{ match.player2.user.email }}</h3>
+        <h3>{{ match.player2.user.pseudo }}</h3>
         <div class="hp-bar">
             <div class="hp-fill" style="width: {{ match.score2 ?? 0 }}%;"></div>
         </div>
@@ -42,174 +55,374 @@
 </div>
 
 
+
+
+{# ------------------------------------------------------------- #
+   🎴 — PHASE : CARTES (SLOTS)
+# ------------------------------------------------------------- #}
+
+{% if match.phase == 'cards' %}
+
+    {# Récup readySelf / readyOpp #}
+    {% set readySelf = isP1 ? match.player1Ready : (isP2 ? match.player2Ready : false) %}
+    {% set readyOpp  = isP1 ? match.player2Ready : (isP2 ? match.player1Ready : false) %}
+
+    {# Séparation cartes pour ARBITRE OU JOUEUR #}
+    {% set myList = [] %}
+    {% set oppList = [] %}
+
+    {% if isReferee %}
+        {% set oppList = usedCards %}
+    {% else %}
+        {% for c in usedCards %}
+            {% if currentParticipant and c.usedBy.id == currentParticipant.user.id %}
+                {% set myList = myList|merge([c]) %}
+            {% else %}
+                {% set oppList = oppList|merge([c]) %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <h2 class="section-title">🎴 Phase des cartes</h2>
+
+    <div class="ready-status">
+        <p>👤 Vous : {{ readySelf ? "✅ Prêt" : "⏳ Pas prêt" }}</p>
+        <p>👤 Adversaire : {{ readyOpp ? "✅ Prêt" : "⏳ Pas prêt" }}</p>
+    </div>
+
+    <div class="card-zone">
+
+        {# ---------------------- #
+           🃏 Mes cartes à moi
+        # ---------------------- #}
+        <div class="cards-side">
+            <h3>🃏 Vos cartes</h3>
+
+            <div class="card-slots">
+                {% set myDisplay = isReferee ? [] : myList|slice(0,3) %}
+
+                {% for i in 0..2 %}
+                    {% set play = myDisplay[i] ?? null %}
+
+                    {% if play %}
+                        <div class="slot card-revealed">
+                            <img src="{{ asset('img/cards/' ~ play.card.image) }}" alt="">
+                            <p class="card-name">{{ play.card.name }}</p>
+                        </div>
+                    {% else %}
+                        <div class="slot empty-slot"></div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+
+        {# --------------------------- #
+           🃏 Cartes adverses
+        # --------------------------- #}
+        <div class="cards-side">
+            <h3>🃏 Cartes adverses</h3>
+
+            <div class="card-slots">
+
+                {% set oppDisplay = oppList|slice(0,3) %}
+
+                {% for i in 0..2 %}
+                    {% set play = oppDisplay[i] ?? null %}
+
+                    {% if play %}
+                        {% if match.phase == 'battle' or match.phase == 'validated' or isReferee %}
+                            <div class="slot card-revealed">
+                                <img src="{{ asset('img/cards/' ~ play.card.image) }}" alt="">
+                                <p class="card-name">{{ play.card.name }}</p>
+                            </div>
+                        {% else %}
+                            <div class="slot card-hidden">
+                                <img src="{{ asset('img/cards/backside.png') }}" alt="">
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="slot empty-slot"></div>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
     {# ------------------------------------------------------------- #
-       🔥🔥🔥 PHASE : CARTES
+       🧩 VOS CARTES DISPONIBLES — seulement joueur
     # ------------------------------------------------------------- #}
-    {% if match.phase == 'cards' %}
 
-        <h2 class="section-title">🎴 Phase des cartes</h2>
-
-        {# ----- STATUT READY ----- #}
-        {% set isP1 = (match.player1.user.id == app.user.id) %}
-        {% set readySelf = isP1 ? match.player1Ready : match.player2Ready %}
-        {% set readyOpp  = isP1 ? match.player2Ready : match.player1Ready %}
-
-        <div class="ready-status">
-            <p>👤 Vous : {{ readySelf ? "✅ Prêt" : "⏳ Pas prêt" }}</p>
-            <p>👤 Adversaire : {{ readyOpp ? "✅ Prêt" : "⏳ Pas prêt" }}</p>
-        </div>
-
-        {# ----- TES CARTES UTILISÉES ----- #}
-        <div class="cards-phase">
-            <div class="my-cards">
-                <h3>Vos cartes utilisées : {{ myCards|length }}</h3>
-
-                {% if myCards is not empty %}
-                    <ul>
-                        {% for c in myCards %}
-                            <li>{{ c.card.name }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>Aucune carte utilisée pour l'instant.</p>
-                {% endif %}
-            </div>
-
-            {# ----- CARTES ADVERSAIRES : juste le nombre ----- #}
-            <div class="opp-cards">
-                <h3>Cartes adverses jouées : {{ oppCardsCount }}</h3>
-                <p><em>(Les cartes seront révélées seulement après validation de la phase.)</em></p>
-            </div>
-        </div>
-
-
-        {# ----- VOS CARTES DISPONIBLES ----- #}
+    {% if not isReferee %}
         <h3 class="section-title">🧩 Vos cartes disponibles</h3>
 
-        <div class="available-cards">
+        <div class="card-grid selectable">
             {% if availableCards is empty %}
                 <p>Aucune carte disponible.</p>
             {% else %}
                 {% for pc in availableCards %}
-                    <form method="POST"
-                          action="{{ path('app_tournament_match_use_card', {
-                              tournamentId: tournament.id,
-                              id: match.id,
-                              cardId: pc.card.id
-                          }) }}"
-                          style="display:inline-block">
+                    <div class="card-item {{ pc.card.type }}">
 
-                        <button class="btn btn-neon small-card-btn">
-                            {{ pc.card.name }} (x{{ pc.quantity }})
-                        </button>
-                    </form>
+                        <div class="quantity-badge">x{{ pc.quantity }}</div>
+
+                        <div class="card-image">
+                            <img src="{{ asset('img/cards/' ~ pc.card.image) }}" alt="{{ pc.card.name }}">
+                        </div>
+
+                        <div class="card-body">
+                            <h4 class="card-title">{{ pc.card.name }}</h4>
+                            <p class="card-type">{{ pc.card.type|capitalize }}</p>
+                        </div>
+
+                        <form method="POST"
+                            action="{{ path('app_tournament_match_use_card', {
+                                tournamentId: tournament.id,
+                                id: match.id,
+                                cardId: pc.card.id
+                            }) }}">
+                            <button class="use-card-btn">Utiliser</button>
+                        </form>
+
+                    </div>
                 {% endfor %}
             {% endif %}
         </div>
+    {% endif %}
 
 
-        {# ----- READY / CANCEL READY ----- #}
+    {# READY #}
+    {% if not isReferee %}
         <div class="ready-zone">
             {% if not readySelf %}
-                <form method="POST" action="{{ path('app_tournament_match_set_ready', {
-                    tournamentId: tournament.id,
-                    id: match.id
-                }) }}">
+                <form method="POST"
+                    action="{{ path('app_tournament_match_set_ready', { tournamentId: tournament.id, id: match.id }) }}">
                     <button class="btn btn-success neon-btn">J'ai fini mes cartes</button>
                 </form>
             {% else %}
-                <form method="POST" action="{{ path('app_tournament_match_cancel_ready', {
-                    tournamentId: tournament.id,
-                    id: match.id
-                }) }}">
+                <form method="POST"
+                    action="{{ path('app_tournament_match_cancel_ready', { tournamentId: tournament.id, id: match.id }) }}">
                     <button class="btn-red">❌ Annuler prêt</button>
                 </form>
             {% endif %}
         </div>
-
-        <p class="info-text">La phase passera automatiquement en « battle » lorsque les deux joueurs seront prêts.</p>
-
     {% endif %}
 
+{% endif %}
 
 
-    {# ------------------------------------------------------------- #
-       🔥🔥🔥 PHASE : BATTLE (Révélation des cartes)
-    # ------------------------------------------------------------- #}
-    {% if match.phase == 'battle' %}
 
-        <h2 class="section-title">🪄 Cartes révélées</h2>
 
-        {% if usedCards is empty %}
-            <p>Aucune carte n’a été utilisée.</p>
-        {% else %}
-            <ul class="used-card-list">
-                {% for c in usedCards %}
-                    <li>
-                        <strong>{{ c.usedBy.email }}</strong> → {{ c.card.name }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+{# ------------------------------------------------------------- #
+   ⚔️ BATTLE — Révélation des cartes
+# ------------------------------------------------------------- #}
 
-        <p>Le match peut maintenant être joué. L'arbitre saisira ensuite les scores.</p>
+{% if match.phase == 'battle' %}
 
+    <h2 class="section-title">🪄 Cartes révélées</h2>
+
+    {% set myList = [] %}
+    {% set oppList = [] %}
+
+    {% if isReferee %}
+        {% set oppList = usedCards %}
+    {% else %}
+        {% for c in usedCards %}
+            {% if currentParticipant and c.usedBy.id == currentParticipant.user.id %}
+                {% set myList = myList|merge([c]) %}
+            {% else %}
+                {% set oppList = oppList|merge([c]) %}
+            {% endif %}
+        {% endfor %}
     {% endif %}
 
+    <div class="reveal-wrapper">
+
+        <div class="reveal-column">
+            <h3 class="reveal-title">🎴 Vos cartes</h3>
+
+            {% if myList is empty %}
+                <p>Aucune carte utilisée.</p>
+            {% else %}
+                <div class="card-grid">
+                    {% for c in myList %}
+                        <div class="card-item {{ c.card.type }}">
+                            <div class="card-image">
+                                <img src="{{ asset('img/cards/' ~ c.card.image) }}">
+                            </div>
+                            <h4 class="card-title">{{ c.card.name }}</h4>
+                            <p class="card-type">{{ c.card.type|capitalize }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
 
 
-    {# ------------------------------------------------------------- #
-       🔥🔥🔥 PHASE : VALIDATED
-    # ------------------------------------------------------------- #}
-    {% if match.phase == 'validated' %}
+        <div class="reveal-column">
+            <h3 class="reveal-title">🎴 Cartes adverses</h3>
 
-        <h2 class="section-title">🏁 Match validé</h2>
+            {% if oppList is empty %}
+                <p>Aucune carte utilisée.</p>
+            {% else %}
+                <div class="card-grid">
+                    {% for c in oppList %}
+                        <div class="card-item {{ c.card.type }}">
+                            <div class="card-image">
+                                <img src="{{ asset('img/cards/' ~ c.card.image) }}">
+                            </div>
+                            <h4 class="card-title">{{ c.card.name }}</h4>
+                            <p class="card-type">{{ c.card.type|capitalize }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
 
-        <p>Vainqueur : <strong>{{ match.winner.user.email }}</strong></p>
+    </div>
 
-        <h3>Cartes utilisées :</h3>
+{% endif %}
+
+
+
+
+{# ------------------------------------------------------------- #
+   🏁 MATCH VALIDÉ
+# ------------------------------------------------------------- #}
+
+{% if match.phase == 'validated' %}
+
+    <h2 class="section-title">🏁 Match validé</h2>
+
+    <p class="winner-line">
+        🏆 Vainqueur :
+        <strong class="winner-name">{{ match.winner.user.pseudo }}</strong>
+    </p>
+
+    {% set myList = [] %}
+    {% set oppList = [] %}
+
+    {% if isReferee %}
+        {% set oppList = usedCards %}
+    {% else %}
+        {% for c in usedCards %}
+            {% if currentParticipant and c.usedBy.id == currentParticipant.user.id %}
+                {% set myList = myList|merge([c]) %}
+            {% else %}
+                {% set oppList = oppList|merge([c]) %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <div class="reveal-wrapper">
+
+        <div class="reveal-column">
+            <h3 class="reveal-title">🃏 Vos cartes</h3>
+
+            {% if myList is empty %}
+                <p>Aucune carte jouée.</p>
+            {% else %}
+                <div class="card-grid">
+                    {% for c in myList %}
+                        <div class="card-item {{ c.card.type }}">
+                            <div class="card-image">
+                                <img src="{{ asset('img/cards/' ~ c.card.image) }}">
+                            </div>
+                            <h4 class="card-title">{{ c.card.name }}</h4>
+                            <p class="card-type">{{ c.card.type|capitalize }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+
+        <div class="reveal-column">
+            <h3 class="reveal-title">🃏 Cartes adverses</h3>
+
+            {% if oppList is empty %}
+                <p>Aucune carte jouée.</p>
+            {% else %}
+                <div class="card-grid">
+                    {% for c in oppList %}
+                        <div class="card-item {{ c.card.type }}">
+                            <div class="card-image">
+                                <img src="{{ asset('img/cards/' ~ c.card.image) }}">
+                            </div>
+                            <h4 class="card-title">{{ c.card.name }}</h4>
+                            <p class="card-type">{{ c.card.type|capitalize }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+
+
+
+{# ------------------------------------------------------------- #
+   📜 HISTORIQUE DU COMBAT
+# ------------------------------------------------------------- #}
+
+{% if match.combatLog is not empty %}
+    <div class="combat-log">
+        <h3>📜 Historique du combat</h3>
         <ul>
-            {% for c in usedCards %}
-                <li><strong>{{ c.usedBy.email }}</strong> → {{ c.card.name }}</li>
+            {% for line in match.combatLog %}
+                <li>{{ line }}</li>
             {% endfor %}
         </ul>
+    </div>
+{% endif %}
 
-    {% endif %}
 
 
 
-    {# ------------------------------------------------------------- #
-       🔥🔥🔥 BOUTON VALIDATION ARBITRE (UNIQUEMENT EN BATTLE)
-    # ------------------------------------------------------------- #}
-    {% if match.phase == 'battle' 
-        and (is_granted('ROLE_REFEREE') or match.tournament.referees.contains(app.user))
-        and not match.isValidated %}
-         {# --- Formulaire pour le referee : saisie des scores --- #}
-    {% if is_granted('ROLE_REFEREE') or match.tournament.referees.contains(app.user) %}
+{# ------------------------------------------------------------- #
+   ⚖️ SECTION ARBITRE
+# ------------------------------------------------------------- #}
+
+{% if match.phase == 'battle'
+      and isReferee
+      and not match.isValidated %}
+
+    <div class="referee-zone">
+
+        <h3>⚖️ Validation du match</h3>
+
         <form method="post" class="score-form">
             <input type="hidden" name="action" value="score">
 
             <div class="score-inputs">
-                <label>{{ match.player1.user.email }} :</label>
+                <label>{{ match.player1.user.pseudo }} :</label>
                 <input type="number" name="score1" min="0" value="{{ match.score1 ?? '' }}">
 
-                <label>{{ match.player2.user.email }} :</label>
+                <label>{{ match.player2.user.pseudo }} :</label>
                 <input type="number" name="score2" min="0" value="{{ match.score2 ?? '' }}">
 
-                <button type="submit" class="btn btn-neon">💾 Enregistrer les scores</button>
+                <button class="btn btn-neon">💾 Enregistrer les scores</button>
             </div>
         </form>
-    {% endif %}
 
         <form method="post" class="validate-form">
             <input type="hidden" name="action" value="validate">
             <button type="submit" class="btn btn-neon">✅ Valider le match</button>
         </form>
-    {% endif %}
 
+    </div>
 
-    <a href="{{ path('app_tournament_show', { id: tournament.id }) }}" class="btn-back">← Retour au tournoi</a>
+{% endif %}
+
 
 </section>
 {% endblock %}
-
