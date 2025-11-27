@@ -289,4 +289,9 @@ public function getTournamentParticipations(): Collection
 {
     return $this->tournamentParticipations;
 }
+
+public function __toString(): string
+{
+    return $this->pseudo ?? $this->email ?? 'Utilisateur';
+}
 }

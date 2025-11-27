@@ -6,9 +6,7 @@ use App\Entity\TournamentMatch;
 use App\Entity\Tournament;
 use App\Entity\TournamentParticipant;
 use App\Controller\Admin\TournamentParticipantCrudController;
-
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -18,7 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-
+#[IsGranted('ROLE_ADMIN')]
 class TournamentMatchCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

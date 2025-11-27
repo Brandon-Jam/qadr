@@ -10,12 +10,7 @@
            alt="{{ tournament.name }}">
     </div>
 
-  {% if app.user in tournament.referees %}
-    <a href="{{ path('app_tournament_match_new', { tournamentId: tournament.id }) }}" class="btn btn-neon">
-        ➕ Créer un match
-    </a>
-
-{% endif %}
+ 
     <div class="tournament-info">
       <h1>{{ tournament.name }}</h1>
       <p class="meta">📅 {{ tournament.date|date('d/m/Y') }} — 📍 {{ tournament.location }}</p>

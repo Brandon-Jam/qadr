@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="referee-dashboard">
+
+    <h1>👨‍⚖️ Tableau de bord arbitre</h1>
+    <h2>{{ tournament.name }}</h2>
+
+    <p>Bienvenue arbitre. Gérez les matchs en temps réel.</p>
+
+    <div class="stats">
+        <p>🟢 Matchs en cours : {{ activeMatches|length }}</p>
+        <p>🔵 Matchs terminés : {{ finishedMatches|length }}</p>
+        {# Nombre total de participants #}
+{% set total = tournament.tournamentParticipants|length %}
+
+{# Nombre de participants non éliminés (HP > 0) #}
+{% set alive = tournament.tournamentParticipants|filter(p => p.hp > 0)|length %}
+
+{# Éliminés = total - vivants #}
+{% set eliminated = total - alive %}
+<p class="participants-count">
+    👥 Joueurs restants : {{ alive }} / {{ total }}  
+    (💀 Éliminés : {{ eliminated }})
+</p>
+<p class="referee-score">
+    🧑‍⚖️ Matchs arbitrés : {{ matchesArbitred }}
+</p>
+
+    </div>
+
+   <a class="btn-neon" href="{{ path('app_tournament_match_referee_match_list', { tournamentId: tournament.id }) }}">
+
+
+
+        Gérer les matchs en cours ⚔️
+    </a>
+
+</section>
+{% endblock %}

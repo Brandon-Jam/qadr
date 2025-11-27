@@ -130,7 +130,6 @@ class MatchInviteController extends AbstractController
         return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
     }
 
-
     #[Route('/tournament/invite/{inviteId}/accept', name: 'match_invite_accept')]
     public function accept(int $inviteId, EntityManagerInterface $em): Response
     {
@@ -200,7 +199,7 @@ class MatchInviteController extends AbstractController
         $match->setTournament($tournament);
         $match->setPlayer1($challenger);
         $match->setPlayer2($opponent);
-        $match->setScore1(3); 
+        $match->setScore1(3);
         $match->setScore2(3);
         $match->setStartTime(new \DateTimeImmutable());
         $match->setCreatedAt(new \DateTimeImmutable());
@@ -215,7 +214,6 @@ class MatchInviteController extends AbstractController
             'id' => $match->getId()
         ]);
     }
-
 
     #[Route('/tournament/invite/{inviteId}/refuse', name: 'match_invite_refuse')]
     public function refuse(int $inviteId, EntityManagerInterface $em): Response

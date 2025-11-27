@@ -7,7 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: TournamentRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Tournament
 {
     #[ORM\Id]
@@ -30,7 +32,10 @@ class Tournament
     #[ORM\Column]
     private ?float $winningPrice = null;
 
-  #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'integer')]
+    private int $maxPendingSlots = 80; // limite pré-inscriptions
+
+    #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $date = null;
 
     #[ORM\Column(length: 255)]
@@ -68,7 +73,7 @@ class Tournament
         $this->tournamentMatches = new ArrayCollection();
         $this->tournamentParticipants = new ArrayCollection();
         $this->tournamentCards = new ArrayCollection();
-         $this->referees = new ArrayCollection(); 
+        $this->referees = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -203,14 +208,14 @@ class Tournament
     }
 
     #[ORM\OneToMany(mappedBy: 'tournament', targetEntity: TournamentParticipant::class, orphanRemoval: true)]
-private Collection $participants;
+    private Collection $participants;
 
 
 
-public function getParticipants(): Collection
-{
-    return $this->participants;
-}
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
 
     /**
      * @return Collection<int, TournamentParticipant>
@@ -274,42 +279,50 @@ public function getParticipants(): Collection
 
     public function getImage(): ?string
     {
-    return $this->image;
-    }   
+        return $this->image;
+    }
 
     public function setImage(?string $image): static
     {
-    $this->image = $image;
-    return $this;
+        $this->image = $image;
+        return $this;
     }
 
     #[ORM\ManyToMany(targetEntity: User::class)]
-#[ORM\JoinTable(name: "tournament_referees")]
-#[ORM\JoinColumn(name: "tournament_id", referencedColumnName: "id")]
-#[ORM\InverseJoinColumn(name: "user_id", referencedColumnName: "id")]
-private Collection $referees;
+    #[ORM\JoinTable(name: "tournament_referees")]
+    #[ORM\JoinColumn(name: "tournament_id", referencedColumnName: "id")]
+    #[ORM\InverseJoinColumn(name: "user_id", referencedColumnName: "id")]
+    private Collection $referees;
 
 
 
 
-// ✅ Getters / setters
-public function getReferees(): Collection
-{
-    return $this->referees;
-}
-
-public function addReferee(User $referee): self
-{
-    if (!$this->referees->contains($referee)) {
-        $this->referees->add($referee);
+    // ✅ Getters / setters
+    public function getReferees(): Collection
+    {
+        return $this->referees;
     }
 
-    return $this;
-}
+    public function addReferee(User $referee): self
+    {
+        if (!$this->referees->contains($referee)) {
+            $this->referees->add($referee);
+        }
 
-public function removeReferee(User $referee): self
-{
-    $this->referees->removeElement($referee);
-    return $this;
-}
+        return $this;
+    }
+
+    public function removeReferee(User $referee): self
+    {
+        $this->referees->removeElement($referee);
+        return $this;
+    }
+
+     #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
+    }
 }

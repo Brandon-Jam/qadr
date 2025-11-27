@@ -15,71 +15,14 @@
         <p>👨‍⚖️ Vous êtes arbitre de ce tournoi.</p>
     {% endif %}
 
-    {% if matches is empty %}
-        <p class="empty-text">Aucun match n’a encore été enregistré pour ce tournoi.</p>
-    {% else %}
-
-        {# ===================== À JOUER ===================== #}
-        <h2 class="section-title">🕐 Matchs à jouer</h2>
-        <div class="matches-grid">
-
-            {% set hasPending = false %}
-            {% for match in matches %}
-                {% if match.score1 is null and match.score2 is null %}
-                    {% set hasPending = true %}
-
-                    <div class="match-card">
-                        <div class="match-row">
-
-                            {# --- PLAYER 1 --- #}
-                            <div class="player-side">
-                                <div class="avatar neon-avatar-blue">
-                                    <img src="{{ asset('img/avatars/' ~ (match.player1.user.avatar ?: 'default.jpg')) }}" alt="avatar">
-
-                                </div>
-                                <p class="player-name">{{ match.player1.user.pseudo }}</p>
-                            </div>
-
-                            <div class="vs-circle">VS</div>
-
-                            {# --- PLAYER 2 --- #}
-                            <div class="player-side">
-                                <div class="avatar neon-avatar-pink">
-                                    <img src="{{ asset('img/avatars/' ~ match.player2.avatar|default('default.png')) }}" alt="">
-                                </div>
-                                <p class="player-name">{{ match.player2.user.pseudo }}</p>
-                            </div>
-
-                        </div>
-
-                        <div class="match-footer">
-                            <p class="status text-warning">À jouer</p>
-
-                            {% if app.user in tournament.referees %}
-                                <a href="{{ path('app_tournament_match_show', {tournamentId: tournament.id, id: match.id}) }}" class="btn-manage">Manager</a>
-                            {% else %}
-                                <a href="{{ path('app_tournament_match_show', {tournamentId: tournament.id, id: match.id}) }}" class="btn-view">Voir</a>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                {% endif %}
-            {% endfor %}
-
-            {% if not hasPending %}
-                <p class="empty-text">Aucun match à jouer.</p>
-            {% endif %}
-        </div>
-
-        <hr class="section-separator">
-
+    
 
         {# ===================== EN COURS ===================== #}
         <h2 class="section-title">⚔️ Matchs en cours</h2>
         <div class="matches-grid">
 
             {% set hasActive = false %}
-            {% for match in matches %}
+            {% for match in activeMatches  %}
                 {% if match.score1 is not null and match.score2 is not null and match.score1 > 0 and match.score2 > 0 %}
                     {% set hasActive = true %}
 
@@ -128,7 +71,7 @@
         <div class="matches-grid">
 
             {% set hasFinished = false %}
-            {% for match in matches %}
+            {% for match in finishedMatches  %}
                 {% if match.score1 is not null and match.score2 is not null and (match.score1 == 0 or match.score2 == 0) %}
 
                     {% set hasFinished = true %}
@@ -181,7 +124,6 @@
             {% endif %}
 
         </div>
-
-    {% endif %}
+   
 </section>
 {% endblock %}

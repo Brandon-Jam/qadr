@@ -3,7 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Tournament;
-use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -13,7 +12,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 class TournamentCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -24,16 +25,12 @@ class TournamentCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
+            // ID
             IdField::new('id')->onlyOnIndex(),
 
+            // Infos générales
             TextField::new('name', 'Nom du tournoi'),
             TextField::new('location', 'Lieu'),
-
-            IntegerField::new('availableSlots', 'Places disponibles'),
-            
-            IntegerField::new('price', 'Prix d’entrée (€)'),
-
-            IntegerField::new('winningPrice', 'Cash prize (€)'),
 
             DateTimeField::new('date', 'Date du tournoi')
                 ->setRequired(true),
@@ -45,16 +42,33 @@ class TournamentCrudController extends AbstractCrudController
                 'En cours' => 'in_progress',
             ]),
 
-            DateTimeField::new('createdAt', 'Créé le')
-                ->hideOnForm(),
+            // Capacités
+            IntegerField::new('availableSlots', 'Places disponibles'),
 
-            TextField::new('image', 'Image (URL ou chemin)'),
+            // Prix & récompenses
+            MoneyField::new('price', 'Prix d’entrée')
+                ->setCurrency('EUR'),
 
+            MoneyField::new('winningPrice', 'Cash prize')
+                ->setCurrency('EUR'),
+
+            // Image
+            ImageField::new('image', 'Image du tournoi')
+                ->setBasePath('img/tournaments')        // URL publique
+                ->setUploadDir('public/img/tournaments') // Dossier serveur
+                ->setRequired(false)
+                ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]'),
+
+            // Arbitres
             AssociationField::new('referees', 'Arbitres')
                 ->setFormTypeOptions([
                     'by_reference' => false,
                 ])
                 ->setRequired(false),
+
+            // Infos internes
+            DateTimeField::new('createdAt', 'Créé le')
+                ->hideOnForm(),
         ];
     }
 }

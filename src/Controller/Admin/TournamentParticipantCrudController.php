@@ -3,18 +3,19 @@
 namespace App\Controller\Admin;
 
 use App\Entity\TournamentParticipant;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-
+#[IsGranted('ROLE_ADMIN')]
 class TournamentParticipantCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -22,51 +23,103 @@ class TournamentParticipantCrudController extends AbstractCrudController
         return TournamentParticipant::class;
     }
 
+    /**
+     * ⭐️ ACTIONS ADMIN
+     */
+    public function configureActions(Actions $actions): Actions
+    {
+        $approve = Action::new('approve', '✔️ Approuver')
+            ->linkToCrudAction('approveParticipant');
+
+        $reject = Action::new('reject', '❌ Refuser')
+            ->linkToCrudAction('rejectParticipant');
+
+        $markPaid = Action::new('markPaid', '💰 Marquer payé')
+            ->linkToCrudAction('markParticipantPaid');
+
+        return $actions
+            ->add(Action::INDEX, $approve)
+            ->add(Action::INDEX, $reject)
+            ->add(Action::INDEX, $markPaid);
+    }
+
+    /**
+     * ⭐️ FIELDS
+     */
     public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id')->hideOnForm(),
 
-            AssociationField::new('user')
-                ->setLabel('Utilisateur'),
+            AssociationField::new('user', 'Utilisateur'),
+            AssociationField::new('tournament', 'Tournoi'),
 
-            AssociationField::new('tournament')
-                ->setLabel('Tournoi'),
+            BooleanField::new('isPending', 'En attente'),
+            BooleanField::new('isApproved', 'Validé'),
+            BooleanField::new('isPaid', 'Payé'),
 
-            BooleanField::new('confirmed')
-                ->setLabel('Confirmé'),
+            IntegerField::new('hp', 'HP'),
+            BooleanField::new('isEliminated', 'Éliminé'),
 
-            DateTimeField::new('joinedAt')
-                ->setLabel('Inscrit le')
-                ->hideOnIndex(),
+            IntegerField::new('credits', 'Crédits actuels'),
+            IntegerField::new('creditsEarned', 'Crédits gagnés'),
+            IntegerField::new('creditsSpent', 'Crédits dépensés'),
 
-            IntegerField::new('hp')
-                ->setLabel('HP'),
+            DateTimeField::new('joinedAt', 'Demande le')->hideOnIndex(),
 
-            BooleanField::new('isEliminated')
-                ->setLabel('Éliminé'),
-
-            IntegerField::new('credits')
-                ->setLabel('Crédits actuels'),
-
-            IntegerField::new('creditsEarned')
-                ->setLabel('Crédits gagnés'),
-
-            IntegerField::new('creditsSpent')
-                ->setLabel('Crédits dépensés'),
-
-            // Relations utilitaires (affichables mais pas éditables)
-            CollectionField::new('tournamentParticipantCards')
-                ->setLabel('Cartes possédées')
+            CollectionField::new('tournamentParticipantCards', 'Cartes')
                 ->hideOnForm(),
 
-            CollectionField::new('matchInvitesSent')
-                ->setLabel('Invitations envoyées')
+            CollectionField::new('matchInvitesSent', 'Invites envoyées')
                 ->hideOnForm(),
 
-            CollectionField::new('matchInvitesReceived')
-                ->setLabel('Invitations reçues')
+            CollectionField::new('matchInvitesReceived', 'Invites reçues')
                 ->hideOnForm(),
         ];
+    }
+
+    /**
+     * ⭐️ ACTION : APPROUVER
+     */
+    public function approveParticipant(AdminContext $context, EntityManagerInterface $em)
+    {
+        $p = $context->getEntity()->getInstance();
+        $p->setIsPending(false);
+        $p->setIsApproved(true);
+
+        $em->flush();
+
+        $this->addFlash('success', 'Participant approuvé ✔️');
+        return $this->redirect($context->getReferrer());
+    }
+
+    /**
+     * ⭐️ ACTION : REFUSER
+     */
+    public function rejectParticipant(AdminContext $context, EntityManagerInterface $em)
+    {
+        $p = $context->getEntity()->getInstance();
+
+        $em->remove($p);
+        $em->flush();
+
+        $this->addFlash('warning', 'Participant refusé ❌');
+        return $this->redirect($context->getReferrer());
+    }
+
+    /**
+     * ⭐️ ACTION : MARQUER PAYÉ
+     */
+    public function markParticipantPaid(AdminContext $context, EntityManagerInterface $em)
+    {
+        $p = $context->getEntity()->getInstance();
+
+        $p->setIsApproved(true);
+        $p->setIsPaid(true);
+
+        $em->flush();
+
+        $this->addFlash('success', 'Paiement confirmé 💰');
+        return $this->redirect($context->getReferrer());
     }
 }

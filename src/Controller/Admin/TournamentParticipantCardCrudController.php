@@ -5,16 +5,14 @@ namespace App\Controller\Admin;
 use App\Entity\TournamentParticipantCard;
 use App\Entity\TournamentParticipant;
 use App\Entity\Card;
-
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-//#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN')]
 class TournamentParticipantCardCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

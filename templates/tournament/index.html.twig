@@ -1,55 +1,82 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tournois{% endblock %}
+{% block title %}Tournois
+{% endblock %}
 
 {% block body %}
-<section class="tournament-hero">
-  <div class="overlay"></div>
-  <div class="hero-content">
-    <h1>Liste des Tournois</h1>
-    <p>Affronte d’autres challengers et prouve ta valeur dans l’arène 🔥</p>
-  </div>
-</section>
+	<section class="tournament-hero">
+		<div class="overlay"></div>
+		<div class="hero-content">
+			<h1>Liste des Tournois</h1>
+			<p>Affronte d’autres challengers et prouve ta valeur dans l’arène 🔥</p>
+		</div>
+	</section>
 
-<section class="tournament-list">
-  {% if tournaments is empty %}
-    <p class="no-tournament">Aucun tournoi disponible pour le moment ⚔️</p>
-  {% else %}
-    <div class="tournament-grid">
-      {% for tournament in tournaments %}
-        <div class="tournament-card">
-          <a href="{{ path('app_tournament_show', { id: tournament.id }) }}" class="card-link">
-            <div class="tournament-img">
-              <img 
-                src="{{ tournament.image ? asset('img/tournaments/' ~ tournament.image) }}" 
-                alt="Image du tournoi {{ tournament.name }}">
-            </div>
+	<section class="tournament-list">
+		{% if tournaments is empty %}
+			<p class="no-tournament">Aucun tournoi disponible pour le moment ⚔️</p>
+		{% else %}
+			<div class="tournament-grid">
+				{% for tournament in tournaments %}
+					<div class="tournament-card">
+						<a href="{{ path('app_tournament_show', { id: tournament.id }) }}" class="card-link">
+							<div class="tournament-img">
+								<img src="{{ tournament.image ? asset('img/tournaments/' ~ tournament.image) }}" alt="Image du tournoi {{ tournament.name }}">
+							</div>
 
-            <div class="tournament-info">
-              <h2>{{ tournament.name }}</h2>
-              <p class="location">📍 {{ tournament.location }}</p>
-              <p class="date">📅 {{ tournament.date|date('d/m/Y') }}</p>
-            </div>
-          </a>
+							<div class="tournament-info">
+								<h2>{{ tournament.name }}</h2>
+								<p class="location">📍
+									{{ tournament.location }}</p>
+								<p class="date">📅
+									{{ tournament.date|date('d/m/Y') }}</p>
+							</div>
+						</a>
 
-          <div class="tournament-actions">
-            {% if app.user %}{% if app.user in tournament.referees %}
-  <p>👨‍⚖️ Vous êtes arbitre de ce tournoi.</p>
-{% endif %}
-              {% if tournament.id in registeredTournaments %}
-                <button class="btn-joined" disabled>Déjà inscrit ✅</button>
-                {% elseif tournament.tournamentParticipants|length >= tournament.availableSlots %}
-      <button class="btn-disabled" disabled>Complet ❌</button>
-              {% else %}
-                <a href="{{ path('app_tournament_register', { id: tournament.id }) }}" class="btn-join">S’inscrire 🔥</a>
-              {% endif %}
-            {% else %}
-              <a href="{{ path('app_login') }}" class="btn-login-neon">Se connecter</a>
-            {% endif %}
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-</section>
+						<div class="tournament-actions">
+
+    {% if app.user %}
+
+        {# 🔍 On récupère la participation éventuelle de l'utilisateur #}
+        {% set p = tournament.tournamentParticipants|filter(p => p.user == app.user)|first %}
+
+        {# 🧑‍⚖️ L'utilisateur est arbitre #}
+        {% if app.user in tournament.referees %}
+            <p>👨‍⚖️ Vous êtes arbitre de ce tournoi.</p>
+
+        {# 🕓 Pré-inscrit mais pas encore validé #}
+        {% elseif p and p.isPending and not p.isApproved %}
+            <button class="btn-pending" disabled>⏳ Pré-inscription en attente</button>
+
+        {# 💰 Validé par admin mais paiement pas confirmé #}
+        {% elseif p and p.isApproved and not p.isPaid %}
+            <button class="btn-warning" disabled>💰 Paiement en attente</button>
+
+        {# ✔️ Validé + payé → vrai inscrit #}
+        {% elseif p and p.isApproved and p.isPaid %}
+            <button class="btn-joined" disabled>Inscription confirmée ✔️</button>
+
+        {# ❌ Pré-inscriptions complètes (80 max) #}
+        {% elseif tournament.tournamentParticipants|filter(pp => pp.isPending)|length >= 80 %}
+            <button class="btn-disabled" disabled>❌ Pré-inscriptions fermées (80 / 80)</button>
+
+        {# 🔥 Nouvelle pré-inscription #}
+        {% else %}
+            <a href="{{ path('app_tournament_pre_register', { id: tournament.id }) }}" class="btn-join">
+                S’inscrire (pré-inscription) 🔥
+            </a>
+        {% endif %}
+
+    {% else %}
+        <a href="{{ path('app_login') }}" class="btn-login-neon">Se connecter</a>
+    {% endif %}
+
+</div>
+
+
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+	</section>
 {% endblock %}

@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use App\Repository\TournamentParticipantRepository;
 
 #[ORM\Entity(repositoryClass: TournamentParticipantRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class TournamentParticipant
 {
     #[ORM\Id]
@@ -19,10 +20,9 @@ class TournamentParticipant
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?bool $confirmed = null;
+   
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $joinedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'tournamentParticipants')]
@@ -37,11 +37,20 @@ class TournamentParticipant
     #[ORM\Column(type: 'boolean')]
     private bool $isEliminated = false;
 
-    #[ORM\OneToMany(mappedBy: 'player1', targetEntity: TournamentMatch::class)]
-private Collection $matchesAsPlayer1;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isPending = true; // pré-inscrit par défaut
 
-#[ORM\OneToMany(mappedBy: 'player2', targetEntity: TournamentMatch::class)]
-private Collection $matchesAsPlayer2;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isApproved = false; // validé par l’admin
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isPaid = false; // paiement validé
+
+    #[ORM\OneToMany(mappedBy: 'player1', targetEntity: TournamentMatch::class)]
+    private Collection $matchesAsPlayer1;
+
+    #[ORM\OneToMany(mappedBy: 'player2', targetEntity: TournamentMatch::class)]
+    private Collection $matchesAsPlayer2;
 
     // ----- MATCH INVITES -----
     #[ORM\OneToMany(mappedBy: 'challenger', targetEntity: MatchInvite::class, cascade: ['remove'])]
@@ -64,7 +73,7 @@ private Collection $matchesAsPlayer2;
     private int $creditsEarned = 0;
 
     #[ORM\OneToMany(mappedBy: 'winner', targetEntity: TournamentMatch::class)]
-private Collection $tournamentMatchesWon;
+    private Collection $tournamentMatchesWon;
 
     #[ORM\Column(type: 'integer')]
     private int $creditsSpent = 0;
@@ -77,7 +86,7 @@ private Collection $tournamentMatchesWon;
         $this->matchInvitesReceived = new ArrayCollection();
         $this->tournamentMatchesWon = new ArrayCollection();
         $this->matchesAsPlayer1 = new ArrayCollection();
-$this->matchesAsPlayer2 = new ArrayCollection();
+        $this->matchesAsPlayer2 = new ArrayCollection();
     }
 
     // -----------------------------------
@@ -89,16 +98,8 @@ $this->matchesAsPlayer2 = new ArrayCollection();
         return $this->id;
     }
 
-    public function isConfirmed(): ?bool
-    {
-        return $this->confirmed;
-    }
+   
 
-    public function setConfirmed(bool $confirmed): static
-    {
-        $this->confirmed = $confirmed;
-        return $this;
-    }
 
     public function getJoinedAt(): ?\DateTimeImmutable
     {
@@ -133,9 +134,43 @@ $this->matchesAsPlayer2 = new ArrayCollection();
         return $this;
     }
     public function getTournamentMatchesWon(): Collection
+    {
+        return $this->tournamentMatchesWon;
+    }
+
+    public function isPending(): bool
 {
-    return $this->tournamentMatchesWon;
+    return $this->isPending;
 }
+
+public function setIsPending(bool $isPending): self
+{
+    $this->isPending = $isPending;
+    return $this;
+}
+
+public function isApproved(): bool
+{
+    return $this->isApproved;
+}
+
+public function setIsApproved(bool $isApproved): self
+{
+    $this->isApproved = $isApproved;
+    return $this;
+}
+
+public function isPaid(): bool
+{
+    return $this->isPaid;
+}
+
+public function setIsPaid(bool $isPaid): self
+{
+    $this->isPaid = $isPaid;
+    return $this;
+}
+
 
     // -----------------------------------
     // CREDITS SYSTEM
@@ -175,27 +210,27 @@ $this->matchesAsPlayer2 = new ArrayCollection();
     }
 
     public function getHp(): int
-{
-    return $this->hp;
-}
+    {
+        return $this->hp;
+    }
 
-public function setHp(int $hp): self
-{
-    $this->hp = $hp;
-    return $this;
-}
+    public function setHp(int $hp): self
+    {
+        $this->hp = $hp;
+        return $this;
+    }
 
-public function isEliminated(): bool
-{
-    return $this->isEliminated;
-}
+    public function isEliminated(): bool
+    {
+        return $this->isEliminated;
+    }
 
-public function setIsEliminated(bool $isEliminated): self
-{
-    $this->isEliminated = $isEliminated;
+    public function setIsEliminated(bool $isEliminated): self
+    {
+        $this->isEliminated = $isEliminated;
 
-    return $this;
-}
+        return $this;
+    }
     // -----------------------------------
     // CARDS
     // -----------------------------------
@@ -301,4 +336,12 @@ public function setIsEliminated(bool $isEliminated): self
 
         return $this;
     }
+
+    #[ORM\PrePersist]
+public function onPrePersist(): void
+{
+    if ($this->joinedAt === null) {
+        $this->joinedAt = new \DateTimeImmutable();
+    }
+}
 }
