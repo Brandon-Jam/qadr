@@ -285,7 +285,10 @@ public function getParticipants(): Collection
 
     #[ORM\ManyToMany(targetEntity: User::class)]
 #[ORM\JoinTable(name: "tournament_referees")]
+#[ORM\JoinColumn(name: "tournament_id", referencedColumnName: "id")]
+#[ORM\InverseJoinColumn(name: "user_id", referencedColumnName: "id")]
 private Collection $referees;
+
 
 
 

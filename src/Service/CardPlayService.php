@@ -55,7 +55,7 @@ class CardPlayService
         // 2) Limite de 3 cartes ?
         $existing = $matchCardRepo->findBy([
             'match'  => $match,
-            'usedBy' => $user,
+            'player' => $participant,
         ]);
 
         if (count($existing) >= self::MAX_CARDS_PER_MATCH) {
@@ -79,7 +79,8 @@ class CardPlayService
         $usage = (new MatchCardPlay())
             ->setCard($card)
             ->setMatch($match)
-            ->setUsedBy($user)
+            ->setPlayer($participant)
+            ->setUsedBy($user)    
             ->setUsedAt(new \DateTimeImmutable());
 
         // Décrémenter le stock

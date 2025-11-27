@@ -48,6 +48,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
+    #[ORM\ManyToMany(targetEntity: Tournament::class, mappedBy: "referees")]
+private Collection $refereedTournaments;
+
     /**
      * @var Collection<int, TournamentMatch>
      */
@@ -65,6 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tournamentMatches = new ArrayCollection();
         $this->tournament = new ArrayCollection();
         $this->tournamentParticipations = new ArrayCollection();
+        $this->refereedTournaments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -106,6 +110,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return array_unique($roles);
     }
+
+    public function getRefereedTournaments(): Collection
+{
+    return $this->refereedTournaments;
+}
 
     /**
      * @param list<string> $roles

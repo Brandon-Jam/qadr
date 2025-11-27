@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="referee-page">
+
+    <h1 class="referee-title">Matchs en cours</h1>
+
+    {% if matches is empty %}
+        <p class="referee-empty">Aucun match en cours.</p>
+    {% endif %}
+
+    <div class="referee-match-list">
+
+        {% for match in matches %}
+
+            <div class="referee-card">
+
+                <div class="referee-players">
+                    <span class="p1">{{ match.player1.user.pseudo }}</span>
+                    <span class="vs">VS</span>
+                    <span class="p2">{{ match.player2.user.pseudo }}</span>
+                </div>
+
+                <form 
+                    action="{{ path('app_tournament_match_referee_validate', {
+                        tournamentId: tournament.id,
+                        matchId: match.id
+                    }) }}" 
+                    method="POST"
+                    class="referee-form"
+                >
+                    <div class="referee-scores">
+                        <input 
+                            type="number" 
+                            name="score1" 
+                            min="0" max="3" 
+                            required
+                            class="score-input"
+                        >
+                        <span class="dash">-</span>
+                        <input 
+                            type="number" 
+                            name="score2" 
+                            min="0" max="3" 
+                            required
+                            class="score-input"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-validate">
+                        ✔ Valider le match
+                    </button>
+                </form>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+{% endblock %}

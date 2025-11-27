@@ -1,0 +1,80 @@
+/* --- PAGE ARBITRE --- */
+.referee-page {
+    padding: 18px;
+    color: white;
+}
+
+.referee-title {
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+}
+
+.referee-empty {
+    text-align: center;
+    color: #aaa;
+    margin-top: 40px;
+}
+
+.referee-match-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.referee-card {
+    background: #121212;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.referee-players {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.referee-players .vs {
+    color: #00eaff;
+    padding: 0 8px;
+}
+
+.referee-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.referee-scores {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+}
+
+.score-input {
+    width: 60px;
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 6px;
+    border-radius: 8px;
+    border: none;
+    background: #1f1f1f;
+    color: white;
+}
+
+.btn-validate {
+    width: 100%;
+    padding: 10px;
+    background: #00eaff;
+    border: none;
+    color: black;
+    font-weight: 700;
+    border-radius: 8px;
+    font-size: 1rem;
+}
