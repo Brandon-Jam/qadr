@@ -341,4 +341,9 @@ class Tournament
             $this->createdAt = new \DateTimeImmutable();
         }
     }
+
+    public function __toString(): string
+{
+    return $this->name ?? 'Tournoi'; // ou autre champ
+}
 }

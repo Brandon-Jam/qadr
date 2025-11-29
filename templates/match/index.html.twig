@@ -4,7 +4,11 @@
 
 {% block body %}
 <section class="match-list-section">
-
+    {% if app.request.query.get('notActive') %}
+    <div class="flash flash-warning">
+        🚧 Le tournoi n’est pas encore lancé. Reviens quand il sera activé !
+    </div>
+{% endif %}
     <h1 class="page-title">🏆 Matchs du tournoi : {{ tournament.name }}</h1>
     <p class="tournament-info">
         📍 {{ tournament.location }} |

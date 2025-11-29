@@ -3,16 +3,17 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Tournament;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 #[IsGranted('ROLE_ADMIN')]
 class TournamentCrudController extends AbstractCrudController
@@ -58,6 +59,12 @@ class TournamentCrudController extends AbstractCrudController
                 ->setUploadDir('public/img/tournaments') // Dossier serveur
                 ->setRequired(false)
                 ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]'),
+
+            // Tournois Actif ?
+            BooleanField::new('active', 'Tournoi actif ?')
+                ->renderAsSwitch(true)
+                ->setHelp('Active = le tournoi est lancé et toutes les fonctionnalités seront débloquées.'),
+
 
             // Arbitres
             AssociationField::new('referees', 'Arbitres')

@@ -25,13 +25,19 @@ class RequireActiveTournamentListener
             return;
         }
 
-        $reflection = new \ReflectionMethod($controller[0], $controller[1]);
+         $method = new \ReflectionMethod($controller[0], $controller[1]);
+    $class  = new \ReflectionClass($controller[0]);
 
-        // If the attribute is NOT present → ignore
-        $attributes = $reflection->getAttributes(RequireActiveTournament::class);
-        if (empty($attributes)) {
-            return;
-        }
+    // 🔥 Vérifie si l'attribut est sur la MÉTHODE
+    $methodAttr = $method->getAttributes(RequireActiveTournament::class);
+
+    // 🔥 Vérifie si l'attribut est sur la CLASSE
+    $classAttr = $class->getAttributes(RequireActiveTournament::class);
+
+    // 👉 Si aucun des deux → on sort
+    if (empty($methodAttr) && empty($classAttr)) {
+        return;
+    }
 
         $request = $event->getRequest();
 

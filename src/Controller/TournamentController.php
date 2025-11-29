@@ -9,6 +9,7 @@ use App\Entity\TournamentParticipant;
 use App\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\TournamentParticipantCard;
+use App\Security\RequireActiveTournament;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Repository\TournamentMatchRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -218,6 +219,7 @@ public function registerToTournament(
 
 
     #[Route('/tournament/{id}/shop', name: 'app_tournament_shop')]
+    #[RequireActiveTournament]
     public function shop(Tournament $tournament, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
