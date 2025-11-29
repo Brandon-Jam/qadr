@@ -12,6 +12,7 @@ use App\Entity\TournamentParticipant;
 use App\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\TournamentParticipantCard;
+use App\Security\RequireActiveTournament;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Repository\TournamentMatchRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,7 @@ use App\Repository\TournamentParticipantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/tournament/{tournamentId}/match', name: 'app_tournament_match_')]
+#[RequireActiveTournament]
 class MatchController extends AbstractController
 {
     // ============================================================

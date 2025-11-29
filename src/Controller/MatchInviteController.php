@@ -2,18 +2,20 @@
 
 namespace App\Controller;
 
-use App\Entity\MatchInvite;
 use App\Entity\Tournament;
+use App\Entity\MatchInvite;
 use App\Entity\TournamentMatch;
 use App\Entity\TournamentParticipant;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Security\RequireActiveTournament;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MatchInviteController extends AbstractController
 {
     #[Route('/tournament/{id}/challenge/{opponentId}', name: 'match_invite_send')]
+    #[RequireActiveTournament]
     public function send(
         Tournament $tournament,
         int $opponentId,
@@ -131,6 +133,7 @@ class MatchInviteController extends AbstractController
     }
 
     #[Route('/tournament/invite/{inviteId}/accept', name: 'match_invite_accept')]
+    #[RequireActiveTournament]
     public function accept(int $inviteId, EntityManagerInterface $em): Response
     {
         $inviteRepo      = $em->getRepository(MatchInvite::class);
@@ -216,6 +219,7 @@ class MatchInviteController extends AbstractController
     }
 
     #[Route('/tournament/invite/{inviteId}/refuse', name: 'match_invite_refuse')]
+    #[RequireActiveTournament]
     public function refuse(int $inviteId, EntityManagerInterface $em): Response
     {
         $invite = $em->getRepository(MatchInvite::class)->find($inviteId);

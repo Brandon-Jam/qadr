@@ -50,6 +50,10 @@ class Tournament
     #[ORM\Column(type: 'boolean')]
     private bool $isValidated = false;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $active = false;
+
+
     /**
      * @var Collection<int, TournamentMatch>
      */
@@ -176,6 +180,18 @@ class Tournament
 
         return $this;
     }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): self
+    {
+        $this->active = $active;
+        return $this;
+    }
+
 
     /**
      * @return Collection<int, TournamentMatch>
@@ -318,7 +334,7 @@ class Tournament
         return $this;
     }
 
-     #[ORM\PrePersist]
+    #[ORM\PrePersist]
     public function onPrePersist(): void
     {
         if ($this->createdAt === null) {
